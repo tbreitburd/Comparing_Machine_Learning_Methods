@@ -180,6 +180,24 @@ best_model = grid.best_estimator_
 prediction = best_model.predict(B_mv_no_labels)
 B_mv_no_labels['classification'] = prediction
 
+# Assess what k value was optimal
+results = pd.DataFrame(grid.cv_results_)
+
+# Create a summary table of the results
+k_values = results['param_knn__n_neighbors']
+mean_test_scores = results['mean_test_score']
+std_test_scores = results['std_test_score']
+
+summary_table = pd.DataFrame({
+    'k_value': k_values,
+    'mean_accuracy': mean_test_scores,
+    'std_accuracy': std_test_scores
+})
+
+print('Summary table of k values (useful for q3): \n')
+print(summary_table)
+print("----------------------------------")
+
 # And now add those to the original dataframe
 B_no_nan = pd.concat([B_no_nan, B_mv_no_labels])
 
