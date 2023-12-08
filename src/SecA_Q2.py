@@ -42,7 +42,9 @@ duplicates = B_no_labels[B_no_labels.duplicated(keep=False)]
 Labels = B_no_nan['classification']
 
 print('Number of duplicates: ', len(duplicates))
+print("----------------------------------")
 print('The duplicates are samples: ' + str(duplicates.index.values + 21))
+print("----------------------------------")
 
 # One way to address the duplicates is to use kNN to train a classifier
 # on the data without the duplicates, and then use the classifier to predict
@@ -96,15 +98,17 @@ dropped_duplicates = []
 for i in duplicates.index.values:
     if duplicates.loc[i]['classification'] != Labels[i]:
         dropped_duplicates.append(i + 21)
-        B_no_nan.drop(i, inplace=True)
+        B_no_nan.drop(i).copy()
 
 
 print(str(len(dropped_duplicates)) + ' dropped mislabelled duplicates, samples: ', dropped_duplicates)
+print("----------------------------------")
+
 # Check that the duplicates have been dropped
 
 new_duplicates = B_no_nan[B_no_nan.duplicated(keep=False)]
 print('Number of remaining duplicates: ', len(new_duplicates))
-
+print("----------------------------------")
 
 print('Compare this to the summary of labels: \n', B_no_nan['classification'].value_counts())
 
@@ -119,6 +123,7 @@ print('----------------------------------')
 B_missing_vals = B[B.isnull().any(axis=1)]
 
 print('Number of missing values: ', len(B_missing_vals))
+print("----------------------------------")
 
 # We will use the same method as in part (b) to address the missing values
 # We will use the data without the missing values to train the classifier
@@ -174,7 +179,6 @@ best_model = grid.best_estimator_
 # Predict the labels of the samples whose labels are missing
 prediction = best_model.predict(B_mv_no_labels)
 B_mv_no_labels['classification'] = prediction
-print('Labels were predicted')
 
 # And now add those to the original dataframe
 B_no_nan = pd.concat([B_no_nan, B_mv_no_labels])
