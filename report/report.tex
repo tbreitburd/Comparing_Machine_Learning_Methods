@@ -145,11 +145,11 @@
 
 \section*{Question 1}
 
-In this question we are given a dataset which contains 408 observations, each with 500 features. All features seem to be continuous variables. The dataset contains a classification column, containing 3 categories: 1, 2 and 4. The aim of this question is to explore the dataset and conduct some processing of the data. Conducting a check for missing values, which there were none, the data is explore in the following ways.
+The aim of this question is to explore the dataset and conduct some processing of the data. Conducting a check for missing values, which there were none, the data is explore in the following ways.
 
 \subsection*{(a)}
 
-The data first needs to be visualised in some way. Now because there are 500 features, and therefore 500 dimensions in the feature-space, this means that for now, only visualisations of each feature separately is useful. Thus a density plot of the first 20 features is obtained and shown below (Figure 1). In Figure 1, the features were grouped by similarity and not by number. The main observation is just that: some features are very similar to each other, following similar distributions. Some are bimodal, others have a stronger peak on just one of bimodal peak locations. A rough assumption to be made here would be that there are overall 3\-4 groups of highly correlated features for the entire dataset. The most common one has a very strong peak at 0, with a much smaller one at around 1. Another is bimodal, with peaks at 0 and 3. And the last one is also bimodal, with peaks at 0 and a stonger one at approximately 4. This is not yet a firm conclusion but is a good starting point for further analysis. If the features can be grouped then one could reduce the dimensionality of the feature-space to 1 representative feature from each group.
+The data first needs to be visualised in some way. Now because there are 500 features, and therefore 500 dimensions in the feature-space, this means that for now, only visualisations of each feature separately is useful. Thus a density plot of the first 20 features is obtained and shown below (Figure 1).  The main observation is that some features are very similar to each other, following similar distributions. A rough assumption is there are overall 3\-4 groups of highly correlated features for the entire dataset. The most common one has a very strong peak at 0, with a much smaller one at around 1. Another is bimodal, with peaks at 0 and 3. And the last one is also bimodal, with peaks at 0 and a stonger one at approximately 4. If the features can be grouped then one could reduce the dimensionality of the feature-space to 1 representative feature from each group.
 
 \begin{figure}[hp]
     \centering
@@ -161,7 +161,7 @@ The data first needs to be visualised in some way. Now because there are 500 fea
 
 \subsection*{(b)}
 
-Thus, Principle Component Analysis (PCA) is conducted on the dataset. PCA enables one to derive a lower-dimensional set of features from the full \textbf{A} dataset. This is done by finding the direction in which the observations have the greatest variance, for the full feature space\cite[pp. 255-257]{james2013introduction}. This is done on the entire dataset, not just the first 20 features. Dropping the classification column, \texttt{scikit-learn}'s PCA function is used, setting the number of components to 2 to get the first 2 Principles Components (PC). The dimensionaly reduced dataset was obtained and the data was plotted in the following scatter plot (Figure 2).
+Thus, Principle Component Analysis (PCA) is conducted on the dataset. PCA enables one to derive a lower-dimensional set of features from the full \textbf{A} dataset. This is done by finding the direction in which the observations have the greatest variance, for the full feature space\cite[pp. 255-257]{james2013introduction}. This is done on the entire dataset, not just the first 20 features. Using \texttt{scikit-learn}'s PCA function, getting the first 2 Principles Components (PC). The dimensionaly reduced dataset was obtained and the data was plotted in the following scatter plot (Figure 2).
 
 \begin{figure}[h]
     \centering
@@ -169,11 +169,11 @@ Thus, Principle Component Analysis (PCA) is conducted on the dataset. PCA enable
     \caption{\textbf{Scatter plot of the dataset after PCA.} Density contours are also shown.}
 \end{figure}
 
-From Figure 2, the bimodal separation seen in some of the first 20 features is seen again in the 1$^{st}$ PC. SMTHG ABOUT LINEAR SEPARATION.\ The 2$^{nd}$ PC also resembles the more commonly observed feature in Figure 1, with a very strong peak and a much weaker one at a slightly higher value, more from the right-hand side group. This is hard to see in the scatter plot, but the desnity contours do show the negative skewness of the data's distribution for that PC.\
+From Figure 2, the bimodal separation seen in some of the first 20 features is seen again in the 1$^{st}$ PC. SMTHG about linear sep.\ The 2$^{nd}$ PC also resembles the more commonly observed feature in Figure 1, with a very strong peak and a much weaker one at a slightly higher value, more from the right-hand side group. This is hard to see in the scatter plot, but the density contours do show the negative skewness of the data's distribution for that PC.\
 
 \subsection*{(c)}
 
-From this visualisation, clustering could be run to try and visualise the how the clusters would compare to these groups that are observed. In this case, the actual classification is known but it is worth seeing how this would perform if it was not. The \texttt{scikit-learn} KMeans clustering algorithm was used, with all parameters set to their default values. This is done by not inputting any parameters to the function, apart from the random state so the same result is obtained at every run.  
+From this, clustering can be run to try and see how they would compare to the distribution observed. The \texttt{scikit-learn} KMeans clustering algorithm was used, with all parameters set to their default values, apart from the random state.
 The default number of clusters is 8. Now from Figure 1 and figure 2, it seems unlikely that there are 8 clusters in the data. This is one of the risks of K-means clustering as it will ``find'' 8 clusters, even if there are not 8 clusters in the data. To assess if ``default'' K-means clustering performs adequatly, the data is split into 2. For both these splits, clustering is run and then applied to the other split.  
 The reason this can be done is that K-means clustering's main result is the position of points called centroids, which are the geometrical centres of each clusters (when defining the centroids from the feature means). In terms of their significance they are each the most representative points of each cluster. One of the \texttt{scikit-learn} K-means output is those \texttt{cluster\_centers\_}. Then when using the \texttt{.predict{}} method after fitting the model, i.e. clustering one half of the date, the other half can be clustered base on the distance of each point to the centroids of the clusters. This is done for both splits of the data and the results are shown in the tables below:
 
@@ -213,15 +213,65 @@ Thus, we repeat the clustering for a lower number of clusters, 3, based on the v
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d.png}
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d_3clusters.png}
     \caption{\textbf{Scatter plot of the 2 clusterings} The colors indicate the cluster membership.}
 \end{figure}
 
-Again, the number of the clusters are not the same but it is clear there is a much better agreement between the 2 clusterings. This is also reflected in the contingency table below:
+\subsection*{(e)}
+
+Again, the number of the clusters are not the same but it is clear there is a much better agreement between the 2 clusterings. 
+
+Conducting PCA before and after clustering is useful in both cases. One gives a clue as to how many clusters one should use in the K-means training and the other enables one to visualise the clustering results. One additional thing is that the K-means could have been done on the PCA reduced dataset, which would have been a 2D dataset. The impact on performance in that case is not completely clear.
 
 
+\section*{Question 2}
 
+The same dataset as in A is given. But here, the aim is to deal with duplicated observations and missing labels there are in this version of the dataset.
 
+\subsection*{(a)}
+
+First, the frequency of the labels is summarised in the table below (Table 2):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ |c|c| }
+    \hline
+    \textbf{Label} & \textbf{Frequency} \\
+    \hline
+    \textbf{1.0} & 179 \\ 
+    \hline
+    \textbf{2.0} & 157 \\
+    \hline
+    \textbf{4.0} & 72 \\
+    \hline
+\end{tabular}
+\caption{Frequency of the labels in the \textbf{B} dataset.}
+\end{table}
+
+\subsection*{(b)}
+
+Taking only the feature columns, the following rows were identified as duplicates:
+
+\begin{table}[h]
+\centering
+Samples: [48, 50, 64, 66, 86, 94, 103, 120, 121, 127, 137, 139, 140, 166, 167, 186, 193, 195,
+208, 213, 218, 230, 240, 269, 273, 280, 311, 317, 325, 331, 364, 371, 372, 379, 402, 404,
+409, 416, 429, 444]
+
+\caption{List of duplicated rows.}
+\end{table}
+
+One way to address the dupicates is to use a supervised learning method to train a model on the non-duplicated rows and then predict the labels for the duplicated rows. Once we obtain these label predictions, we compare them with the duplicates' labels and see which ones match. If one does, then we keep that row and discard the other. If both match, we drop one of them to avoid having duplicates, even correctly labelled ones. And if none match, we drop both rows.
+
+Using this method, the following rowws were dropped:
+
+\begin{table}[h]
+    \centering
+    Samples: [29, 82, 100, 116, 118, 146, 172, 209, 219, 259, 290, 296, 350, 358, 381, 395]
+    \caption{List of duplicated rows.}
+\end{table}
+
+Leaving 16 duplicated rows but correctly labelled. In this case we dropped
 
 \bibliographystyle{plain}
 \bibliography{refs.bib}

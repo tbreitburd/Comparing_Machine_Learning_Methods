@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 from scipy import stats
 from warnings import simplefilter
 from sklearn.decomposition import PCA
@@ -55,6 +55,11 @@ pf.A_Q1a(A_20)
 
 A_fea = A.drop(['classification', 'Unnamed: 0'], axis=1)
 
+#Then scaling the data:
+scaler = StandardScaler()
+scaler.fit(A_fea)
+A_fea = pd.DataFrame(scaler.transform(A_fea), columns=A_fea.columns, index=A_fea.index)
+
 
 # Apply PCA
 pca = PCA(n_components=2)
@@ -81,16 +86,16 @@ pf.A_Q1b(A_pca_df)
 
 # Partiton the data into 2 training sets of equal size
 
-A_1, A_2 = train_test_split(A_fea, test_size=0.5, random_state=75016)
+A_1, A_2 = train_test_split(A_fea, test_size=0.5, random_state=42)
 
 # Apply k-means clustering on each of the training sets
 
 # Train set 1
-Model1 = KMeans(random_state=75016).fit(A_1) # From https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+Model1 = KMeans(random_state=42).fit(A_1) # From https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
 train1_cluster = Model1.labels_
 
 # Train set 2
-Model2 = KMeans(random_state=75016).fit(A_2) 
+Model2 = KMeans(random_state=42).fit(A_2) 
 train2_cluster = Model2.labels_
 
 
@@ -99,7 +104,7 @@ clustering_1 = Model1.predict(A_2)
 clustering_2 = Model2.predict(A_1)
 
 # Get a contigency table of the clusters
-contingency_table = pd.crosstab(clustering_1, clustering_2, rownames=['Model 1'], colnames=['Model 2']) 
+contingency_table = pd.crosstab(clustering_1, train1_cluster, rownames=['Model 1'], colnames=['Model 2']) 
 
 print('----------------------------------')
 print("--------------Part c--------------")
@@ -108,8 +113,9 @@ print("Contingency table of the clusters:\n", contingency_table)
 
 
 # Plot the scatter plot of the PCA visualised data
-pf.cluster_plot(A_pca_df, A_1, A_2, clustering_1, clustering_2, 8, 'A_Q1c_8clusters')
+pf.cluster_plot(A_pca_df, A_1, A_2, train1_cluster, clustering_1, 8, 'A_Q1c_8clusters_M1')
 
+pf.cluster_plot(A_pca_df, A_1, A_2, clustering_2, train2_cluster, 8, 'A_Q1c_8clusters_M2')
 
 
 # ------------------------------------------------------------------------------
@@ -132,16 +138,16 @@ pf.A_Q1d_silhouette(silhouette_scores)
 
 # Partiton the data into 2 training sets of equal size
 
-A_1, A_2 = train_test_split(A_fea, test_size=0.5, random_state=75016)
+A_1, A_2 = train_test_split(A_fea, test_size=0.5, random_state=42)
 
 # Apply k-means clustering on each of the training sets
 
 # Train set 1
-Model1 = KMeans(n_clusters = 3, random_state=75016).fit(A_1) # From https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
+Model1 = KMeans(n_clusters = 2, random_state=42).fit(A_1) # From https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
 train1_cluster = Model1.labels_
 
 # Train set 2
-Model2 = KMeans(n_clusters = 3, random_state=75016).fit(A_2) 
+Model2 = KMeans(n_clusters = 2, random_state=42).fit(A_2) 
 train2_cluster = Model2.labels_
 
 
@@ -151,10 +157,10 @@ clustering_2 = Model2.predict(A_1)
 
 # Plot the scatter plot of the PCA visualised data
 # with cluster color coding
-pf.cluster_plot(A_pca_df, A_1, A_2, clustering_1, clustering_2, 3, 'A_Q1d_3clusters')
+pf.cluster_plot(A_pca_df, A_1, A_1, train1_cluster, clustering_2, 2, 'A_Q1d_2clusters')
 
 # Print a contingency table
-contingency_table = pd.crosstab(clustering_1, clustering_2, rownames=['Model 1'], colnames=['Model 2'])
+contingency_table = pd.crosstab(clustering_1, train2_cluster, rownames=['Model 1'], colnames=['Model 2'])
 print("Contingency table of the clusters:\n", contingency_table)
 
 # ------------------------------------------------------------------------------
