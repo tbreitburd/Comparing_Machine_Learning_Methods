@@ -1,8 +1,13 @@
 import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 import Plot_funcs as pf
+from warnings import simplefilter
+
+# Ignore sklearn's FutureWarnings
+simplefilter(action='ignore', category=FutureWarning)
 
 # Load the data
 C = pd.read_csv('data/C_MissingFeatures.csv')
@@ -59,7 +64,9 @@ C_imputed.columns = C_missing_vals.columns
 C_new = C.fillna(C_imputed)
 # Compare these new imputed values with the original values (from B)
 
-#pf.compare_imputed(C_new, B)
+# Compare original and new distributions
+
+pf.A_Q3c(C_new, C_no_nan)
 
 
 
@@ -89,3 +96,26 @@ print('Number of outliers (out of 204,000 data points): ', Outlier_count)
 print('----------------------------------')
 
 print('The outliers are in features: ',  C_d[Any_outliers.any(axis=1)].index.values)
+
+#--------------------------------------------------------------------------------
+# (e) Deal with the outliers
+#--------------------------------------------------------------------------------
+
+# Set the outliers to NaN
+C_new[~Any_outliers] = np.nan
+
+#Apply random forest regressor
+
+# Define a random forest regressor
+regressor = RandomForestRegressor(n_estimators=100, random_state=0)
+
+# Fit the regressor to the data
+regressor.fit(C_new.dropna().drop(columns=['Unnamed: 0', 'classification']), C_new.dropna()['classification'])
+
+# Predict the missing values
+C_imputed = regressor.predict(C_new.drop(columns=['Unnamed: 0', 'classification']))
+
+# Put the imputed values back into the dataframe    
+C_imputed = pd.DataFrame(C_imputed, index=C_new.index)
+C_imputed.columns = ['classification']
+

@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import LocalOutlierFactor
+import Plot_funcs as pf
 
 
 # Load the data
@@ -20,11 +23,21 @@ print('------------------------')
 # Get the frequency of each class
 print(Baseline['type'].value_counts())
 
+# Any missing values?
+if Baseline.isnull().values.any():
+    print('Missing values in the data were found and removed.')
+    Baseline = Baseline.dropna()
+else:
+    print('No missing values were found.')
+
 # Get the features that have 0 variance
 Variances = Baseline.var(axis=0)
 zero_var_features = Variances[Variances == 0].index.tolist()
 print(
     'There are {} features with 0 variance, which will be dropped'.format(len(zero_var_features))
+)
+print(
+    'Those rows are: ', zero_var_features
 )
 
 Baseline = Baseline.drop(columns=zero_var_features)
@@ -39,15 +52,12 @@ Low_Var = Variances[Variances < 0.001]
 print(
     'There are {} features with near 0 variance (<0.001), which will be dropped'.format(len(Low_Var))
 )
+print(
+    'Those rows are: ', Low_Var
+    )
 
 Baseline = Baseline.drop(columns=Low_Var.index.tolist())
 
-# Any missing values?
-if Baseline.isnull().values.any():
-    print('Missing values in the data were found and removed.')
-    Baseline = Baseline.dropna()
-else:
-    print('No missing values were found.')
 
 # Any outliers?
 # Wait to figure out 3(d,e)
@@ -59,10 +69,19 @@ z_score = scaler.fit_transform(Baseline)
 Any_outliers = np.abs(z_score) > 3
 Outlier_count = Any_outliers.sum().sum()
 
+# Local outlier factor
+LOF = LocalOutlierFactor()
+LOF.fit_predict(Baseline)
+LOF = LOF.negative_outlier_factor_
+
+Any_outliers = LOF < -1.2
+
+Outlier_count = Any_outliers.sum().sum()
+
 print('Number of outliers (out of {} data points): ', Outlier_count)
 print('----------------------------------')
 
-print('The outliers are in features: ',  C_d[Any_outliers.any(axis=1)].index.values)
+print('The outliers are in rows: ',  Baseline[Any_outliers].index.values)
 
 # Any duplicated rows?
 Baseline_no_labels = Baseline.drop(columns=['type'])
@@ -86,7 +105,7 @@ for i in range(len(high_cor[0])):
 feature_names = Baseline.columns.values.tolist()
 high_cor_features = [[feature_names[i], feature_names[j]] for i, j in high_cor_features]
 # Print the pairs of highly correlated features
-print('The following pairs of features are highly correlated:')
+print('The following pairs of features are highly correlated (> 0.9):')
 for pair in high_cor_features:
     print(pair)
 print('We will drop one of each pair')
@@ -124,6 +143,24 @@ print("Classes:", classes)
 score = Model.score(Baseline_no_labels_test, Labels_test)
 print("Test set classification error:", 1 - score)
 
+
+#---------For optimal tree number---------
+print('--------Now for the optimal tree number----------')
+# Training the Model using GridSearchCV
+Model = RandomForestClassifier(random_state=42, n_estimators = 170)
+Model.fit(Baseline_no_labels_train, Labels_train)
+
+# Summarise the output of the model
+n_estimators = Model.n_estimators
+
+print("Number of Trees:", n_estimators)
+classes = Model.classes_
+print("Classes:", classes)
+
+# Evaluate the test set classification error
+score = Model.score(Baseline_no_labels_test, Labels_test)
+print("Test set classification error:", 1 - score)
+
 # ------------------------------------------------------------------------------
 # (d) Optimise the model for the best number of trees
 # ------------------------------------------------------------------------------
@@ -145,15 +182,8 @@ for n in np.linspace(15, 300, 100, dtype=int):
     n_estimators.append(n)
 
 # Plot the error rate against the number of trees
-plt.figure(figsize=(6, 5))
-plt.plot(n_estimators, error_rate)
-plt.xlabel('Number of trees')
-plt.ylabel('OOB error rate')
-plt.title('OOB error rate vs number of trees')
-plt.grid()
-plt.tight_layout()
-plt.savefig('Plots/B_Q4d.png')
-plt.show()
+pf.B_Q4d(n_estimators, error_rate, 1)
+
 
 # From the plot the optimal number of trees is around 150
 # Train the model with 150 trees
@@ -175,11 +205,8 @@ feature_importance = Model.feature_importances_
 feature_importances = pd.Series(feature_importance, index=features)
 
 # Print out the feature importances
-fig, ax = plt.subplots(figsize=(5, 12))
-feature_importances.nlargest(50).plot(kind='barh', ax=ax)
-plt.xlabel('Feature Importance')
-plt.ylabel('Feature')
-plt.show()
+pf.B_Q4e(feature_importances, 1)
+
 
 # Retrain the model with the top 20 features
 top_20_features = feature_importances.nlargest(20).index.tolist()
@@ -189,7 +216,7 @@ Baseline_top_20 = Baseline_no_labels[top_20_features]
 Baseline_top_20_train, Baseline_top_20_test, Labels_train, Labels_test = train_test_split(Baseline_top_20, Labels, test_size=0.2, random_state=42)
 
 # Training the Model using GridSearchCV
-Model_top_20 = RandomForestClassifier(n_estimators= 130)
+Model_top_20 = RandomForestClassifier(n_estimators= 170)
 Model_top_20.fit(Baseline_top_20_train, Labels_train)
 
 # Get test set classification accuracy

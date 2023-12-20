@@ -331,7 +331,94 @@ In this dataset, values in various observations and features are missing. 5 obse
 Again, one can deal with these missing values in a number of ways.  
 One is to use model-based imputation, as in Q2. An example of that is using a k-Nearest Neighbour imputing method. The model looks at the $k$ closest observations to the one with missing values and takes the mean of the values for that feature. Again, this captures relationships between the features, and one can select the number $k$ as they wish. However, it does assume a linear relationship.  
 Another is a simple constant value-based imputation. This usually just takes the mean or median value of that feature and imputs it where value are missing for that feature. This is a simple approach where you can avoid dropping values but it ignores any relationship between features and as a result some loss of information occurs.  
-One way to improve this result is by conducting mulitple imputations. Choosing an imputation model, one can repeat the imputation, obtaining a mean and uncertainty of their results. Moreover, imputing multiple times means greater adaptability to the data.
+One way to improve this result is by conducting mulitple imputations. Choosing an imputation model, one can repeat the imputation, obtaining a mean and uncertainty of their results. Moreover, imputing multiple times means greater adaptability to the data\cite{reiter2020}.
+
+\subsection*{(c)}
+
+Here, a k-Nearest Neighbour imputation is used. As said above, this takes into account feature relationships while not being too computationally expensive. The number of neighbours $k$ is set to 10. This is from training a kNN model in Q2 and found an optimal number of neighbours to be 10. Comparing the distribution within the concerned features before and after imputation is the plot below:
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c.png}
+    \caption{\textbf{Density plots of features before and a} Density contours are also shown.}
+\end{figure}
+
+\section*{Question 4}
+
+\subsection*{(a)}
+
+A single decision tree is grown through recursive binary splitting of the data. It is a greedy search as at every node, the splitting is only made according to what the best split is at that time\cite[pp. 337-338]{james2013introduction}. That is described by some criterion, like the Gini Index. The Gini index is a measure of the node "purity", how much of one class the node contains\cite[pp. 338-339]{james2013introduction}. Once the tree is fully grown down to having only totally pure nodes at the end, one can prune it, removing some of the last nodes to avoid having an overtrained tree. In bagging, multiple trees are grown independently on bootstrapped samples of the dataset and combined to reduce the high variance issues single decision trees have\cite[p. 343]{james2013introduction}. Random forests are built in a similar way to bagging but as a tree is built on a bootstrapped sample, at each split the tree has to make, it is only performed on a subset of the features. This decorrelates the trees, and let's them explore a lot more possible splits\cite[354]{james2013introduction}. This sort of helps counteract the greedy nature of the tree. When using a random forest there are a few hyperparameters one can tune to control how each tree is grown. First is the criterion used, as there are options other than the Gini index. Second, the number of features that the tree has to split from at each node. It is usually set to the squareroot of the total number of features.
+
+\subsection*{(b)}
+
+In preparation to training a classifier on the data, some preprocessing was done. The first thing done was to count missing values, and none were found. Then, checks were run for duplicates and none were found either. Now, checks were made for zero-variance features and the following features were identified and dropped:
+
+\begin{center}
+    0 Variance features: [Fea49, Fea66, Fea94, Fea97, Fea106, Fea109, Fea125, Fea129, Fea151, Fea152, Fea187, Fea189, Fea223, Fea224, Fea238, Fea264, Fea293, Fea324, Fea384, Fea432, Fea440, Fea450, Fea463, Fea543, Fea636, Fea666, Fea680, Fea701, Fea707, Fea728, Fea729, Fea750, Fea785, Fea787, Fea808, Fea830, Fea846, Fea930, Fea943, Fea945, Fea973, Fea982]
+\end{center}
+
+Further, with the average variance being 0.618, 16 rows were found with near-zero variance and were also dropped:
+
+\begin{center}
+    Near-zero Variance features: [Fea747, Fea730, Fea57, Fea544, Fea4, Fea154, Fea597, Fea610, Fea19, Fea855, Fea347, Fea843, Fea499, Fea231, Fea404, Fea546]
+\end{center}
+
+Outliers were then dealt with
+
+Finally, 2 pairs of highly correlated features (> 0.9) were found and one of each pairs were dropped: Feature 300 and 345, and Feature 869 and 954.
+
+
+\subsection{c}
+
+The random forest classifier was trained on default parameters: 100 trees, Gini index splitting criteria, no max depth set, and the max number of features to split from set to the squareroot of the total number of features.  
+
+Training this model, a test set classification error of 0.05 is found.
+
+(d) Optimise the algorithm with respect to the number of trees in the random forest. You should be able to do this without explicitly performing cross-validation.
+
+\subsection*{(d)}
+
+This number of trees in the random forest can be optimised using an Out-Of-Bag (OOB) score. This works from the fact each tree is built for a bootstrapped sub-sample of the dataset. Leaving an "Out-Of-Bag" sample the trees for which that sample was OOB can be tested upon. An OOB classification error can thus be obtained, for each number of trees\cite[p. 345]{james2013introduction}.  
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q4d_1.png}
+    \caption{\textbf{OOB error vs number of trees} Density contours are also shown.}
+\end{figure}
+
+Thus, the optimal number of trees is around 170-200, where the OOB error stabilizes, and going further only makes the model more computationally expensive.
+
+Re-running the model for the optimal tree number, the test-classification error now is 0.04.
+
+
+(e) Calculate the feature importance. In your report, describe and interpret the feature importances. Retrain the model using a subset of the most important features. In your report, indicate which features you have chosen and compare the retrained classifier with the original classifier.
+
+
+\subsection*{(e)}
+
+One characteristic of the random forest classifier is it can give us the relative importance of features. It is computed as how much of a reduction in the Gini index (or other used criterion) is brought by that feature. Were it not for the bootstrapping and subset of features to split from, there would not be enough information for that measure to be computed accurately\cite[pp. 345-346]{james2013introduction}. In this case, we obtained the following plot, with the 50 most important features:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q4e_1.png}
+    \caption{\textbf{Feature importance}, for the 50 most important features}
+\end{figure}
+
+We see that feature importance decreases very rapidly before steadily decreasing slowly. Taking the first 20, another random forest model can be trained. With this model, a test set classification error of 0.0999 was obtained. As expected, the performance is slightly lower but considering the amount by which computational complexity was decreased, this is a very positive result.
+
+
+(f) Repeatsteps(b),(c)and(e)foroneothersupervisedlearningclassifier. Compare and contrast the two classification approaches and your results for each.
+
+
+
+
+\section*{Question 5}
+
+
+
+
 
 \bibliographystyle{plain}
 \bibliography{refs.bib}
