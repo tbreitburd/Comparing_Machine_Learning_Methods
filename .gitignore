@@ -10,3 +10,4 @@ report/report.fls
 report/report.fdb_latexmk 
 report/report.blg
 report/report.bbl
+src/__pycache__/

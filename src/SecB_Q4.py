@@ -51,6 +51,18 @@ else:
 
 # Any outliers?
 # Wait to figure out 3(d,e)
+scaler = StandardScaler()
+z_score = scaler.fit_transform(Baseline)
+
+# Apply the threshold of 3 standard deviations
+
+Any_outliers = np.abs(z_score) > 3
+Outlier_count = Any_outliers.sum().sum()
+
+print('Number of outliers (out of {} data points): ', Outlier_count)
+print('----------------------------------')
+
+print('The outliers are in features: ',  C_d[Any_outliers.any(axis=1)].index.values)
 
 # Any duplicated rows?
 Baseline_no_labels = Baseline.drop(columns=['type'])

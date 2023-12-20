@@ -179,47 +179,64 @@ The reason this can be done is that K-means clustering's main result is the posi
 
 \begin{table}[h]
 \centering
-\begin{tabular}{ |c|c|c|c|c|c|c|c| }
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c| }
     \hline
-    \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{7} \\ 
+    \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} \\ 
     \hline
-    \textbf{0} & 4 & 9 & 11 & 4 & 2 & 9 & 2 \\
+    \textbf{0} & 0 & 67 & 0 & 0 & 0 & 0 & 0 & 0 \\
     \hline
-    \textbf{1} & 4 & 5 & 18 & 5 & 3 & 3 & 4 \\
+    \textbf{4} & 0 & 70 & 0 & 0 & 0 & 0 & 0 & 0 \\
     \hline
-    \textbf{2} & 4 & 3 & 12 & 4 & 2 & 2 & 7 \\
+    \textbf{5} & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
     \hline
-    \textbf{3} & 6 & 8 & 9 & 4 & 0 & 0 & 5 \\
+    \textbf{6} & 1 & 0 & 11 & 2 & 9 & 11 & 26 & 3 \\
     \hline
-    \textbf{4} & 3 & 5 & 5 & 2 & 0 & 3 & 1 \\
-    \hline
-    \textbf{5} & 4 & 2 & 9 & 5 & 2 & 5 & 5 \\
-    \hline
-    \textbf{6} & 0 & 0 & 0 & 0 & 0 & 0 & 2 \\
-    \hline
-    \textbf{7} & 0 & 2 & 0 & 0 & 0 & 0 & 0 \\
+    \textbf{7} & 0 & 0 & 1 & 1 & 1 & 0 & 0 & 0 \\
     \hline
 
 \end{tabular}
-\caption{Contingency table for the 2 clusterings.}
+\caption{Contingency table for the 2 clusterings on the first split of the data.}
+\end{table}
+
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c|c|c|c|c|c|c|c| }
+        \hline
+        \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} \\ 
+        \hline
+        \textbf{1} & 76 & 0 & 0 & 0 & 59 & 0 & 0 & 0 \\
+        \hline
+        \textbf{2} & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 2 \\
+        \hline
+        \textbf{4} & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+        \hline
+        \textbf{5} & 0 & 0 & 1 & 0 & 0 & 3 & 3 & 1 \\
+        \hline
+        \textbf{6} & 0 & 1 & 0 & 2 & 0 & 11 & 34 & 8 \\
+        \hline
+    
+    \end{tabular}
+    \caption{Contingency table for the 2 clusterings on the second split of the data.}
 \end{table}
 
 \subsection*{(d)}
 
 As can be seen, cluster 6 for the 2$^{nd}$ clustering (columns) is empty. This can be explained by the initialization of the centroids. Indeed the K-means clustering has to place the centroids somewhere at the start, and they are then updated based on which points are closest to it and their mean. If the centroid for cluster 6 in the 2$^{nd}$ clustering happened to have no points closer to it than other centroids, it stayed where it was for the whole clustering process\cite{scikit-learn}. Overall, the fact that a too large cluster number was selected for the model means there is almost no agreement between clusters (Table 1).  This means that the clusters are not very stable. Stability here refers to getting similar clusters when clustering the same or very similar datasets. Furthermore, the number used to designate the cluster is not the same in the 2 clusterings. In other words, it could be the case that the relatively greater agreement between cluster 1 from the 1$^{st}$ clustering (rows) and cluster 2 from the 2$^{nd}$ clustering (columns), is due to the fact they have centroids that are close to each other. But they happened to have different numbers. Regardless the agreement is small since all values in the table are small.  
 
-Thus, we repeat the clustering for a lower number of clusters, 3, based on the visualisation of the data, Fig 2, and the actual knowledge of there being 3 clusters. We get the following results:
+Thus, we repeat the clustering for a lower number of clusters, 2, based on the visualisation of the data, Fig 2, and ignboring the actual knowledge of there being 3 clusters. We get the following results:
 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d_3clusters.png}
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d_2clusters_A1.png}
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d_2clusters_A2.png}
     \caption{\textbf{Scatter plot of the 2 clusterings} The colors indicate the cluster membership.}
 \end{figure}
 
 \subsection*{(e)}
 
-Again, the number of the clusters are not the same but it is clear there is a much better agreement between the 2 clusterings. 
+Here, with the 2 clusters, both models agree on how to separate the data. 
 
 Conducting PCA before and after clustering is useful in both cases. One gives a clue as to how many clusters one should use in the K-means training and the other enables one to visualise the clustering results. One additional thing is that the K-means could have been done on the PCA reduced dataset, which would have been a 2D dataset. The impact on performance in that case is not completely clear.
 
@@ -271,7 +288,50 @@ Using this method, the following rowws were dropped:
     \caption{List of duplicated rows.}
 \end{table}
 
-Leaving 16 duplicated rows but correctly labelled. In this case we dropped
+Leaving 16 duplicated rows but correctly labelled. In this case we dropped half of those, dropping samples: [106, 145, 192, 248, 252, 310, 388, 423]. 
+
+\subsection*{(c)}
+
+Missing labels is sometimes referred to as a semi-supervised learning case\cite[p. 24]{james2013introduction}.Here are 2 ways observations with missing labels can be dealt with. The first is model based imputation. This relies on training a machine learning model on the dataset with observations with missing labels removed, and then predicting the labels for these observations. The choice of model here is broad since the total number of missing values is not too great, and multiple models would be appropriate. This method takes into account relationships between features though runs the risk of an invalid prediction and therefore affecting the result of any model training conducted subsequently. Another more brute-force approach is a simple removal of those observations. This has the advantage of simplicity though brings loss of information, and becomes inappropriate in a scenario where many observations have missing labels. For that second method especially, it is important to consider why the labels are missing. They can be Missing At Random (MAR), meaning there is no underlying reason for that value missing. On the other hand they could be Missing Not At Random (MNAR), meaning that the data missing, sometimes combined with the values of the features for that observation, carry an important meaning. In that case, dropping these observations would be an important loss of information\cite[pp. 515-516]{james2013introduction}.
+
+\subsection*{(d)}
+
+Here, a model based imputation method is used, assuming the labels are MAR. A multinomial logistic regression is trained on the data without the rows with missing labels. Those 20 rows are dropped, the model is trained and testing returns an accuracy of 0.847. The model is then used to predict the labels for the rows missing them. We obtain new frequencies for the labels: 
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c| }
+        \hline
+        \textbf{Label} & \textbf{Frequency} \\
+        \hline
+        \textbf{1.0} & 187 \\ 
+        \hline
+        \textbf{2.0} & 162 \\
+        \hline
+        \textbf{4.0} & 64 \\
+        \hline
+    \end{tabular}
+    \caption{Frequency of the labels in the \textbf{B} dataset, after missing label prediction.}
+    \end{table}
+
+Table .. shows a slight tendency to predict labels 1.0 and 2.0 compared to 4.0, though there was no strong proof the observations with missing vlaues would follow the original proportions.
+
+\section*{Question 3}
+
+\subsection*{a}
+
+In this dataset, values in various observations and features are missing. 5 observations have missing values. These are samples: [137, 142, 230, 262, 388]. For each of these rows, the following features are missing:
+
+\begin{center}
+    Missing Features: [Fea58, Fea142, Fea150, Fea233, Fea269, Fea299, Fea339, Fea355, Fea458, Fea466, Fea491]
+\end{center}
+
+\subsection*{(b)}
+
+Again, one can deal with these missing values in a number of ways.  
+One is to use model-based imputation, as in Q2. An example of that is using a k-Nearest Neighbour imputing method. The model looks at the $k$ closest observations to the one with missing values and takes the mean of the values for that feature. Again, this captures relationships between the features, and one can select the number $k$ as they wish. However, it does assume a linear relationship.  
+Another is a simple constant value-based imputation. This usually just takes the mean or median value of that feature and imputs it where value are missing for that feature. This is a simple approach where you can avoid dropping values but it ignores any relationship between features and as a result some loss of information occurs.  
+One way to improve this result is by conducting mulitple imputations. Choosing an imputation model, one can repeat the imputation, obtaining a mean and uncertainty of their results. Moreover, imputing multiple times means greater adaptability to the data.
 
 \bibliographystyle{plain}
 \bibliography{refs.bib}

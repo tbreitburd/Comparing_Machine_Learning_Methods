@@ -160,6 +160,53 @@ scaler.fit(B_no_labels)
 B_mv_no_labels = pd.DataFrame(scaler.transform(B_mv_no_labels), columns=B_mv_no_labels.columns, index=B_mv_no_labels.index)
 B_no_labels = pd.DataFrame(scaler.transform(B_no_labels), columns=B_no_labels.columns, index=B_no_labels.index)
 
+
+
+# -----------------------
+# KNN
+# -----------------------
+
+# We use the same cross-validation as in part (b)
+cv = RepeatedKFold(n_splits=5, n_repeats=3, random_state=42)
+
+# Pipeline for Preprocessing and Model Training
+param_tuning_KNN = {'knn__n_neighbors': list(np.logspace(np.log10(5), np.log10(150), 20).astype(int))}
+pipeline_KNN = Pipeline([
+    ('yeojohnson', PowerTransformer(method='yeo-johnson')),
+    ('scaler', StandardScaler()),
+    ('knn', KNeighborsClassifier())
+])
+
+# Training the Model using GridSearchCV
+grid_KNN = GridSearchCV(pipeline_KNN, param_grid=param_tuning_KNN, cv=cv, return_train_score=True)
+grid_KNN.fit(B_no_labels, Labels[B_no_labels.index.values])
+
+# Get the best model
+best_model_KNN = grid_KNN.best_estimator_
+
+# Predict the labels of the samples whose labels are missing
+prediction_KNN = best_model_KNN.predict(B_mv_no_labels)
+
+
+# Assess what k value was optimal
+results = pd.DataFrame(grid_KNN.cv_results_)
+
+# Create a summary table of the results
+k_values = results['param_knn__n_neighbors']
+mean_test_scores = results['mean_test_score']
+std_test_scores = results['std_test_score']
+
+summary_table = pd.DataFrame({
+    'k_value': k_values,
+    'mean_accuracy': mean_test_scores,
+    'std_accuracy': std_test_scores
+})
+
+print('Summary table of k values (useful for q3): \n')
+print(summary_table)
+print("----------------------------------")
+
+
 # Train the classifier on the data without the missing values (and no duplicates)
 # But we need to stratify the data to ensure that the labels are represented
 # in the training set in the same proportion as in the original data
@@ -173,6 +220,7 @@ for train_index, test_index in stratified_split.split(B_no_labels, B_no_nan['cla
     Label_train = B_no_nan['classification'].iloc[train_index]
     B_test = B_no_labels.iloc[test_index]
     Label_test = B_no_nan['classification'].iloc[test_index]
+
 
 # -----------------------
 # Multinomial Logistic Regression

@@ -104,18 +104,20 @@ clustering_1 = Model1.predict(A_2)
 clustering_2 = Model2.predict(A_1)
 
 # Get a contigency table of the clusters
-contingency_table = pd.crosstab(clustering_1, train1_cluster, rownames=['Model 1'], colnames=['Model 2']) 
+contingency_table1 = pd.crosstab(clustering_2, train1_cluster, rownames=['Model 2'], colnames=['Model 1']) 
+contingency_table2 = pd.crosstab(clustering_1, train2_cluster, rownames=['Model 1'], colnames=['Model 2']) 
 
 print('----------------------------------')
 print("--------------Part c--------------")
 print('----------------------------------')
-print("Contingency table of the clusters:\n", contingency_table)
+print("Contingency table of the clusters for A1:\n", contingency_table1)
+print("Contingency table of the clusters for A2:\n", contingency_table2)
 
 
 # Plot the scatter plot of the PCA visualised data
-pf.cluster_plot(A_pca_df, A_1, A_2, train1_cluster, clustering_1, 8, 'A_Q1c_8clusters_M1')
+pf.cluster_plot(A_pca_df, A_1, A_1, train1_cluster, clustering_2, 8, 'A_Q1c_8clusters_A1')
 
-pf.cluster_plot(A_pca_df, A_1, A_2, clustering_2, train2_cluster, 8, 'A_Q1c_8clusters_M2')
+pf.cluster_plot(A_pca_df, A_2, A_2, clustering_1, train2_cluster, 8, 'A_Q1c_8clusters_A2')
 
 
 # ------------------------------------------------------------------------------
@@ -157,11 +159,13 @@ clustering_2 = Model2.predict(A_1)
 
 # Plot the scatter plot of the PCA visualised data
 # with cluster color coding
-pf.cluster_plot(A_pca_df, A_1, A_1, train1_cluster, clustering_2, 2, 'A_Q1d_2clusters')
+pf.cluster_plot(A_pca_df, A_1, A_1, train1_cluster, clustering_2, 2, 'A_Q1d_2clusters_A1')
+pf.cluster_plot(A_pca_df, A_2, A_2, train2_cluster, clustering_1, 2, 'A_Q1d_2clusters_A2')
+
 
 # Print a contingency table
 contingency_table = pd.crosstab(clustering_1, train2_cluster, rownames=['Model 1'], colnames=['Model 2'])
-print("Contingency table of the clusters:\n", contingency_table)
+print("Contingency table of the clusters for the 2nd split:\n", contingency_table)
 
 # ------------------------------------------------------------------------------
 # (e) Identify the clusters within the PCA figure
