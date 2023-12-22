@@ -144,7 +144,7 @@ def A_Q1d_silhouette(silhouette_scores):
     plt.close()
 
 
-def A_Q3c(imputed, original):
+def A_Q3c(imputed, original, num):
     
     fig, axes = plt.subplots(4,3, figsize=(10, 15))
 
@@ -231,7 +231,7 @@ def A_Q3c(imputed, original):
     axes[3,1].legend()
 
     plt.tight_layout()
-    plt.savefig('Plots/A_Q3c.png')
+    plt.savefig('Plots/A_Q3c_'+ str(num) +'.png')
     plt.close()
 
 def B_Q4d(n_estimators, error_rate, num):

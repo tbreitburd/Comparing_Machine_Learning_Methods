@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, RepeatedStratifiedKFold, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import LocalOutlierFactor
 import Plot_funcs as pf
@@ -23,15 +24,16 @@ print('------------------------')
 # Get the frequency of each class
 print(Baseline['type'].value_counts())
 
+Baseline_no_labels = Baseline.drop(columns=['type'])
+
 # Any missing values?
 if Baseline.isnull().values.any():
-    print('Missing values in the data were found and removed.')
-    Baseline = Baseline.dropna()
+    print('Missing values in the data were found')
 else:
     print('No missing values were found.')
 
 # Get the features that have 0 variance
-Variances = Baseline.var(axis=0)
+Variances = Baseline_no_labels.var(axis=0)
 zero_var_features = Variances[Variances == 0].index.tolist()
 print(
     'There are {} features with 0 variance, which will be dropped'.format(len(zero_var_features))
@@ -40,7 +42,7 @@ print(
     'Those rows are: ', zero_var_features
 )
 
-Baseline = Baseline.drop(columns=zero_var_features)
+Baseline_no_labels = Baseline_no_labels.drop(columns=zero_var_features)
 Variances = Variances.drop(zero_var_features)
 
 # Get the features with near 0 variance
@@ -56,42 +58,42 @@ print(
     'Those rows are: ', Low_Var
     )
 
-Baseline = Baseline.drop(columns=Low_Var.index.tolist())
+Baseline_no_labels = Baseline_no_labels.drop(columns=Low_Var.index.tolist())
 
 
 # Any outliers?
 # Wait to figure out 3(d,e)
 scaler = StandardScaler()
-z_score = scaler.fit_transform(Baseline)
+scaler.fit(Baseline_no_labels)
 
+pd.DataFrame(scaler.transform(Baseline_no_labels), columns=Baseline_no_labels.columns, index=Baseline_no_labels.index)
 # Apply the threshold of 3 standard deviations
 
-Any_outliers = np.abs(z_score) > 3
+Any_outliers = np.abs(Baseline_no_labels) > 3
 Outlier_count = Any_outliers.sum().sum()
 
 # Local outlier factor
 LOF = LocalOutlierFactor()
-LOF.fit_predict(Baseline)
+LOF.fit_predict(Baseline_no_labels)
 LOF = LOF.negative_outlier_factor_
 
-Any_outliers = LOF < -1.2
+Any_outliers = LOF < -1.1
 
 Outlier_count = Any_outliers.sum().sum()
 
 print('Number of outliers (out of {} data points): ', Outlier_count)
 print('----------------------------------')
 
-print('The outliers are in rows: ',  Baseline[Any_outliers].index.values)
+print('The outliers are in rows: ',  Baseline_no_labels[~Any_outliers].index.values)
 
 # Any duplicated rows?
-Baseline_no_labels = Baseline.drop(columns=['type'])
 duplicates = Baseline_no_labels[Baseline_no_labels.duplicated(keep=False)]
 
 print('There are {} duplicated rows'.format(len(duplicates)))
 
 # Any highly correlated features?
 # Get a correlation matrix and get the indices with high correlation
-corMat = Baseline.corr()
+corMat = Baseline_no_labels.corr()
 np.fill_diagonal(corMat.values, 0)
 corMat = np.abs(corMat)
 high_cor = np.where(corMat > 0.9)
@@ -102,7 +104,7 @@ for i in range(len(high_cor[0])):
     if high_cor[0][i] < high_cor[1][i]:
         high_cor_features.append([high_cor[0][i], high_cor[1][i]])
 
-feature_names = Baseline.columns.values.tolist()
+feature_names = Baseline_no_labels.columns.values.tolist()
 high_cor_features = [[feature_names[i], feature_names[j]] for i, j in high_cor_features]
 # Print the pairs of highly correlated features
 print('The following pairs of features are highly correlated (> 0.9):')
@@ -112,7 +114,7 @@ print('We will drop one of each pair')
 
 # Drop one of the features in each pair
 for pair in high_cor_features:
-    Baseline = Baseline.drop(columns=[pair[1]])
+    Baseline_no_labels = Baseline_no_labels.drop(columns=[pair[1]])
 
 # ------------------------------------------------------------------------------
 # (c) Train the random forest model
@@ -231,4 +233,52 @@ print('--------part (f)--------')
 print('------------------------')
 
 
+Baseline_no_labels_train, Baseline_no_labels_test, Labels_train, Labels_test = train_test_split(Baseline_no_labels, Labels, test_size=0.2, random_state=42)
 
+
+# Set up SVM with Grid Search and Cross-Validation
+param_grid = {'C': np.logspace(-2, 2, 1), 'gamma': np.logspace(-2, 2, 1)}
+
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=10, random_state=42)
+
+svm = SVC(kernel="linear", random_state=42)
+grid_search = GridSearchCV(svm, param_grid, cv=cv, n_jobs=-1)
+grid_search.fit(Baseline_no_labels_train, Labels_train)
+
+# Best model
+best_svm = grid_search.best_estimator_
+# Evaluate the test set classification error
+score = best_svm.score(Baseline_no_labels_test, Labels_test)
+print("Test set classification error:", 1 - score)
+
+# Get the feature importances
+features = Baseline_no_labels.columns.values.tolist()
+feature_importance = best_svm.coef_[0]
+
+feature_importances = pd.Series(feature_importance, index=features)
+
+
+
+# Print out the feature importances
+pf.B_Q4e(feature_importances, 3)
+
+# Retrain the model with the top 20 features
+top_20_features = feature_importances.nlargest(20).index.tolist()
+Baseline_top_20 = Baseline_no_labels[top_20_features]
+
+# Split the data into training and test sets
+Baseline_top_20_train, Baseline_top_20_test, Labels_train, Labels_test = train_test_split(Baseline_top_20, Labels, test_size=0.2, random_state=42)
+
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=10, random_state=42)
+
+svm = SVC(kernel="linear", random_state=42)
+grid_search = GridSearchCV(svm, param_grid, cv=cv, n_jobs=-1)
+grid_search.fit(Baseline_top_20_train, Labels_train)
+
+# Best model
+best_svm = grid_search.best_estimator_
+# Evaluate the test set classification error
+
+# Get test set classification accuracy
+print('The test set classification error for the model trained on the top 20 most important features is:')
+print(1 - best_svm.score(Baseline_top_20_test, Labels_test))

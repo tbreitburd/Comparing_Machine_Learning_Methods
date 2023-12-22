@@ -66,7 +66,7 @@ C_new = C.fillna(C_imputed)
 
 # Compare original and new distributions
 
-pf.A_Q3c(C_new, C_no_nan)
+pf.A_Q3c(C_new, C_no_nan, 1)
 
 
 
@@ -102,20 +102,22 @@ print('The outliers are in features: ',  C_d[Any_outliers.any(axis=1)].index.val
 #--------------------------------------------------------------------------------
 
 # Set the outliers to NaN
-C_new[~Any_outliers] = np.nan
+C_e_nan = C_d
+C_e_nan[Any_outliers] = np.nan
 
-#Apply random forest regressor
+# Impute the missing values using the same method as before
+imputer = KNNImputer(n_neighbors=10, weights='distance', metric='nan_euclidean')
+imputer.fit(C_d)
 
-# Define a random forest regressor
-regressor = RandomForestRegressor(n_estimators=100, random_state=0)
+# Impute the missing values
+C_imputed = imputer.transform(C_e_nan)
 
-# Fit the regressor to the data
-regressor.fit(C_new.dropna().drop(columns=['Unnamed: 0', 'classification']), C_new.dropna()['classification'])
+# Put the imputed values back into the dataframe
+C_imputed = pd.DataFrame(C_imputed, index=C_e_nan.index)
+C_imputed.columns = C_e_nan.columns
 
-# Predict the missing values
-C_imputed = regressor.predict(C_new.drop(columns=['Unnamed: 0', 'classification']))
 
-# Put the imputed values back into the dataframe    
-C_imputed = pd.DataFrame(C_imputed, index=C_new.index)
-C_imputed.columns = ['classification']
+C_new_e = C_e_nan.fillna(C_imputed)
 
+
+pf.A_Q3c(C_new_e, C_d, 2)

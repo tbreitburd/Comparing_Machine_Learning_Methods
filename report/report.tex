@@ -344,6 +344,16 @@ Here, a k-Nearest Neighbour imputation is used. As said above, this takes into a
     \caption{\textbf{Density plots of features before and a} Density contours are also shown.}
 \end{figure}
 
+\subsection{(d)}
+
+To detect outliers, one can calculate the z-scores of each features by standardizing the data. This is done by shifitng/subtracting feature values by their mean and dividing by their standard deviation\cite[p. 73]{sklearn_book}. This thus expresses each value by how many standard deviations they are from the mean. By then setting a threshold of 3, values furhter than 3 standard deviations can be identified.
+
+\subsection{(e)}
+
+Multiple K-NN imputation.
+
+
+
 \section*{Question 4}
 
 \subsection*{(a)}
