@@ -119,4 +119,14 @@ C_imputed.columns = C_e_nan.columns
 
 C_new_e = C_e_nan.fillna(C_imputed)
 
+# Get how many outliers remain
+scaler = StandardScaler()
+scaler.fit(C_d)
+z_score = scaler.transform(C_new_e)
+# Apply the threshold of 3 standard deviations
+Any_outliers = np.abs(z_score) > 3
+Outlier_count = Any_outliers.sum().sum()
+print('Number of outliers left after correction(out of 204,000 data points): ', Outlier_count)
+
+# Compare the distributions of the original and new data
 pf.A_Q3c(C_new_e, C_d, 2)

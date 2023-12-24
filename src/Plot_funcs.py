@@ -247,6 +247,8 @@ def A_Q3c(imputed, original, num):
     axes[3,1].set_xlim(-2,8)
     axes[3,1].legend()
 
+    axes[3,2].axis('off')
+    
     plt.tight_layout()
     proj_dir = os.getcwd()
     plots_dir = os.path.join(proj_dir, 'plots')

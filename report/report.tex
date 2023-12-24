@@ -167,12 +167,12 @@ Thus, Principle Component Analysis (PCA) is conducted on the dataset. PCA enable
     \caption{\textbf{Scatter plot of the dataset after PCA.} Density contours are also shown.}
 \end{figure}
 
-From Figure 2, the bimodal separation seen in some of the first 20 features is seen again in the 1$^{st}$ PC. SMTHG about linear sep.\ The 2$^{nd}$ PC also resembles the more commonly observed feature in Figure 1, with a very strong peak and a much weaker one at a slightly higher value, more from the right-hand side group. This is hard to see in the scatter plot, but the density contours do show the negative skewness of the data's distribution for that PC.\
+From Figure 2, the bimodal separation seen in some of the first 20 features is seen again in the 1$^{st}$ PC.\ The 2$^{nd}$ PC also resembles the more commonly observed feature in Figure 1, with a very strong peak and a much weaker one at a slightly higher value, more from the right-hand side group. This is hard to see in the scatter plot, but the density contours do show the negative skewness of the data's distribution for that PC.\ It is clear that the PCA transformed data is linearly separable into 2 groups.
 
 \subsection*{(c)}
 
 From this, clustering can be run to try and see how they would compare to the distribution observed. The \texttt{scikit-learn} KMeans clustering algorithm was used, with all parameters set to their default values, apart from the random state.
-The default number of clusters is 8. Now from Figure 1 and figure 2, it seems unlikely that there are 8 clusters in the data. This is one of the risks of K-means clustering as it will ``find'' 8 clusters, even if there are not 8 clusters in the data. To assess if ``default'' K-means clustering performs adequatly, the data is split into 2. For both these splits, clustering is run and then applied to the other split.  
+The default number of clusters is 8\cite{kmeans_sklearn}. Now from Figure 1 and Figure 2, it seems unlikely that there are 8 clusters in the data. This is one of the risks of K-means clustering as it will ``find'' 8 clusters, even if there are not 8 clusters in the data. To assess if ``default'' K-means clustering performs adequatly, the data is split into 2. For both these splits, clustering is run and then applied to the other split.  
 The reason this can be done is that K-means clustering's main result is the position of points called centroids, which are the geometrical centres of each clusters (when defining the centroids from the feature means). In terms of their significance they are each the most representative points of each cluster\cite[p. 243]{sklearn_book}. One of the \texttt{scikit-learn} K-means output is those \texttt{cluster\_centers\_}. Then when using the \texttt{.predict{}} method after fitting the model, i.e.\ clustering one half of the data, the other half can be clustered base on the distance of each point to the centroids. This is done for both splits of the data and the results are shown in the tables below:
 
 \begin{table}[h]
@@ -181,15 +181,17 @@ The reason this can be done is that K-means clustering's main result is the posi
     \hline
     \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} \\ 
     \hline
-    \textbf{0} & 0 & 67 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \textbf{1} & 0 & 72 & 0 & 0 & 0 & 0 & 0 & 0 \\
     \hline
-    \textbf{4} & 0 & 70 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \textbf{2} & 1 & 0 & 1 & 0 & 4 & 1 & 2 & 2 \\
     \hline
-    \textbf{5} & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+    \textbf{3} & 0 & 0 & 2 & 0 & 0 & 0 & 0 & 0 \\
     \hline
-    \textbf{6} & 1 & 0 & 11 & 2 & 9 & 11 & 26 & 3 \\
+    \textbf{4} & 2 & 0 & 6 & 0 & 6 & 8 & 14 & 11 \\
     \hline
-    \textbf{7} & 0 & 0 & 1 & 1 & 1 & 0 & 0 & 0 \\
+    \textbf{5} & 1 & 0 & 1 & 1 & 2 & 1 & 1 & 0 \\
+    \hline
+    \textbf{6} & 0 & 65 & 0 & 0 & 0 & 0 & 0 & 0 \\
     \hline
 
 \end{tabular}
@@ -203,15 +205,17 @@ The reason this can be done is that K-means clustering's main result is the posi
         \hline
         \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} \\ 
         \hline
-        \textbf{1} & 76 & 0 & 0 & 0 & 59 & 0 & 0 & 0 \\
+        \textbf{1} & 0 & 81 & 0 & 0 & 0 & 0 & 54 & 0 \\
         \hline
-        \textbf{2} & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 2 \\
+        \textbf{2} & 0 & 0 & 0 & 3 & 0 & 0 & 0 & 0 \\
         \hline
-        \textbf{4} & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+        \textbf{4} & 1 & 0 & 5 & 1 & 3 & 3 & 0 & 1 \\
         \hline
-        \textbf{5} & 0 & 0 & 1 & 0 & 0 & 3 & 3 & 1 \\
+        \textbf{5} & 0 & 0 & 1 & 0 & 2 & 1 & 0 & 1 \\
         \hline
-        \textbf{6} & 0 & 1 & 0 & 2 & 0 & 11 & 34 & 8 \\
+        \textbf{6} & 0 & 0 & 7 & 5 & 14 & 9 & 0 & 2 \\
+        \hline
+        \textbf{7} & 0 & 0 & 3 & 0 & 2 & 2 & 0 & 3 \\
         \hline
     
     \end{tabular}
@@ -222,7 +226,27 @@ The reason this can be done is that K-means clustering's main result is the posi
 
 As can be seen, some clusters are empty. This can be explained by the initialization of the centroids. Indeed, K-means clustering has to place the centroids somewhere at the start, and they are then updated based on which points are closest to it and their mean. If the centroid happened to have no points closer to it than other centroids at the start, it then stays where it is for the whole clustering process\cite{kmeans_sklearn}. Overall, the fact that a too large cluster number was selected for the model means there is little agreement between clusters (Table 1). Note the cluster numbers are assigned ``randomly'' and so one could have the exact same clusters but one is cluster 4 and the other cluster 7. Even considering this, we'd expect only have 8 large numbers, each on a different row and column. Seeing there are numerous small groups of agreeing clusterings, this is not the case and the clustering is not very stable. Stability here refers to how constant the clusters are when clustering the same or very similar datasets. 
 
-Thus, clustering is done again for a lower number of clusters. Based on the visualisation of the data, Fig 2, and the fact the contingency tables show 3 main groups of samples for which the clusterings agree. The results are shown in Figure 3.  
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../plots/A_Q1d_silhouette.png}
+    \caption{\textbf{Silhouette scores for a few different number of clusters}}
+\end{figure}
+
+Thus, clustering is done again for a lower number of clusters. Based on the visualisation of the data, Fig 2, and Figure 3 which shows the silhouette score (a measure of how well the data is clustered)\cite[pp. 247-250]{sklearn_book}, a number of 2 clusters is chosen. And the following contingency table is obtained:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c|c| }
+        \hline
+        \textbf{Clusters} & \textbf{0} & \textbf{1}\\ 
+        \hline
+        \textbf{0} & 0 & 135\\
+        \hline
+        \textbf{1} & 69 & 0 \\
+        \hline
+    \end{tabular}
+    \caption{\textbf{Contingency table comparing both clusterings for k=2 clusters}}
+    \end{table}
 
 
 \begin{figure}[htbp]
@@ -235,9 +259,9 @@ Thus, clustering is done again for a lower number of clusters. Based on the visu
 
 \subsection*{(e)}
 
-Here, with the 2 clusters, both models agree on how to separate the data. 
+Here, with the 2 clusters, both models agree on how to separate the data, as can be seen in Figure 4 and Table 3. 
 
-Conducting PCA before and after clustering is useful in both cases. One gives a clue as to how many clusters one should use in the K-means training and the other enables one to visualise the clustering results. One additional thing is that the K-means could have been done on the PCA reduced dataset, which would have been a 2D dataset. The impact on performance in that case is not completely clear.
+Conducting PCA before and after clustering is useful in both cases. One gives a clue as to how many clusters one should use in the K-means training and the other enables one to visualise the clustering results. One additional thing is that the K-means could have been done on the PCA reduced dataset, which would have been a 2D dataset. The impact on performance in that case is not completely clear, but usually in a high dimensionality case, PCA helps avoid the Curse of Dimensionality. This Curse is data becoming very sparse as the number of dimensions increases\cite[p. 217]{sklearn_book}. This means distance measurements like the ones in K-means can run into some difficulty. And PCA transforming the data can help avoid some of those issues.
 
 \newpage
 
@@ -271,9 +295,9 @@ Taking only the feature columns, the following rows were identified as duplicate
 
 \begin{table}[h]
 \centering
-Samples: [48, 50, 64, 66, 86, 94, 103, 120, 121, 127, 137, 139, 140, 166, 167, 186, 193, 195,
-208, 213, 218, 230, 240, 269, 273, 280, 311, 317, 325, 331, 364, 371, 372, 379, 402, 404,
-409, 416, 429, 444]
+Samples: [27, 29, 43, 45, 65, 73, 82, 99, 100, 106, 116, 118, 119, 145, 146, 165, 172, 174,
+187, 192, 197, 209, 219, 248, 252, 259, 290, 296, 304, 310, 343, 350, 351, 358, 381, 383,
+388, 395, 408, 423]
 
 \caption{List of the 40 duplicated rows.}
 \end{table}
@@ -292,11 +316,11 @@ Leaving 16 duplicated rows but correctly labelled, meaning half of which need to
 
 \subsection*{(c)}
 
-Missing labels cases are sometimes referred to as a semi-supervised learning case\cite[p. 24]{james2013introduction}.Here are 2 ways observations with missing labels can be dealt with. The first is model based imputation. Similarly to the previous question, this relies on training a machine learning model on a complete version of the dataset (sometimes a subset), and then predicting the labels for the observations with missing labels. The choice of model here is broad since the total number of missing values is not too great, and multiple models would be appropriate. This method takes into account relationships between features though runs the risk of an invalid prediction and therefore affecting the result of any model training conducted subsequently. Another more brute-force approach is a simple removal of those observations. This has the advantage of simplicity though brings loss of information, and becomes inappropriate in a scenario where many observations have missing labels. For that second method especially, it is important to consider why the labels are missing. They can be Missing At Random (MAR), meaning there is no underlying reason for that value missing. On the other hand they could be Missing Not At Random (MNAR), meaning that the data missing, sometimes combined with the values of the features for that observation, carry an important meaning. In that case, dropping these observations would be an important loss of information\cite[pp. 515-516]{james2013introduction}.
+Missing labels cases are sometimes referred to as a semi-supervised learning case\cite[p. 24]{james2013introduction}. Here are 2 ways observations with missing labels can be dealt with. The first is model based imputation. Similarly to the previous question, this relies on training a machine learning model on a complete version of the dataset (sometimes a subset), and then predicting the labels for the observations with missing labels. The choice of model here is broad since the total number of missing values is not too great, and multiple models would be appropriate. This method takes into account relationships between features though runs the risk of an invalid prediction and therefore affecting the result of any model training conducted subsequently. Another more brute-force approach is a simple removal of those observations. This has the advantage of simplicity though brings loss of information, and becomes inappropriate in a scenario where many observations have missing labels. For that second method especially, it is important to consider why the labels are missing. They can be Missing At Random (MAR), meaning there is no underlying reason for that value missing. On the other hand they could be Missing Not At Random (MNAR), meaning that the data missing, sometimes combined with the values of the features for that observation, carry an important meaning. In that case, dropping these observations would be an important loss of information\cite[pp. 515-516]{james2013introduction}.
 
 \subsection*{(d)}
 
-Here, a model based imputation method is used, assuming the labels are MAR. A multinomial logistic regression is trained on the data without the rows with missing labels. Those 20 rows are dropped, the model is trained and testing returns an accuracy of 0.847. The model is then used to predict the labels for the rows missing them. We obtain new frequencies for the labels: 
+Here, a model based imputation method is used, assuming the labels are MAR. A multinomial logistic regression is trained on the data without the rows with missing labels. The 20 rows identified to have missing values are dropped, and the model is trained on the remaining data. Testing returns an accuracy of 0.847. The model is then used to predict the labels for the rows missing them. We obtain new frequencies for the labels: 
 
 \begin{table}[h]
     \centering
@@ -314,7 +338,7 @@ Here, a model based imputation method is used, assuming the labels are MAR. A mu
     \caption{Frequency of the labels in the \textbf{B} dataset, after missing label prediction.}
     \end{table}
 
-Table 6 shows a slight tendency to predict labels 1.0 and 2.0 compared to 4.0, though the observations with missing values do not have to follow the original proportions.
+Table 7 shows a slight tendency to predict labels 1.0 and 2.0 compared to 4.0, though the observations with missing values do not have to follow the original proportions, since we assumed the values were MAR.
 
 \section*{Question 3}
 
@@ -330,17 +354,17 @@ In this dataset, values in various observations and features are missing. 5 obse
 
 Again, one can deal with these missing values in a number of ways.  
 One is to use model-based imputation, as in Q2. An example of that is using a k-Nearest Neighbour imputing method. The model looks at the $k$ closest observations to the one with missing values and takes the mean of the values for that feature. Again, this captures relationships between the features, and one can select the number $k$ as they wish. However, it does assume a linear relationship.  
-Another is a simple constant value-based imputation. This usually just takes the mean or median value of that feature and imputs it where value are missing for that feature. This is a simple approach where you can avoid dropping values but it ignores any relationship between features and as a result some loss of information occurs.  
-One way to improve this result is by conducting mulitple imputations. Choosing an imputation model, one can repeat the imputation, obtaining a mean and uncertainty of their results. Moreover, imputing multiple times means greater adaptability to the data\cite{reiter2020}.
+Another is a simple constant value-based imputation. This usually just takes the mean or median value of that feature and imputs it where values are missing for that feature. This is a simple approach where you can avoid dropping values but it ignores any relationship between features and as a result some loss of information occurs.  
+One way to improve this result is by conducting multiple imputations. Choosing an imputation model, one can repeat the imputation, obtaining a mean and uncertainty of their results. Moreover, imputing multiple times means greater adaptability to the data\cite{reiter2020}.
 
 \subsection*{(c)}
 
-Here, a k-Nearest Neighbour imputation is used. As said above, this takes into account feature relationships while not being too computationally expensive. The number of neighbours $k$ is set to 10. This is from training a kNN model in Q2 and found an optimal number of neighbours to be 10. Comparing the distribution within the concerned features before and after imputation is the plot below:
+Here, a k-Nearest Neighbour imputation is used. As said above, this takes into account feature relationships while not being too computationally expensive. The number of neighbours $k$ is set to 10. This is from training a kNN model in Q2 and found an optimal number of neighbours to be 10. Comparing the distribution within the concerned features before and after imputation, Figure 5 is obtained. As can be seen the distributions show little change, except for small dips at certain points, where the original has lower density than the imputed distribution.
 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c_2.png}
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c_1.png}
     \caption{\textbf{Density plots of features before and after the imputation}}
 \end{figure}
 
@@ -585,7 +609,7 @@ Having applied PCA to run the GMM clustering, the data can be visualised on the 
     \caption{\textbf{Scatter plot of cluster memberships.}For the top 40 features clustering. K-means (left) and GMM (right).}
 \end{figure}
 
-Here, the agreement can be seen between the 2 techniques. The top 40 features clustering is more ambiguous, with the clusters overlapping more, especially for K-means. The main issue with the 2 clustering techniques used is that they are both at risk of falling into local minima. This is especially true for K-means, which is very sensitive to the initialisation of the centroids\cite[p. 263]{sklearn_book}. This could be the reason for some of the disagreements. Futhermore, the Baseline dataset is quite high dimensional, with 1000 features. This leads to something called the Curse of Dimensionality which is that data becomes very sparse as the number of dimensions increases\cite[p. 217]{sklearn_book}. This means distance measurements like the ones in K-means can run into some difficulty.  
+Here, the agreement can be seen between the 2 techniques. The top 40 features clustering is more ambiguous, with the clusters overlapping more, especially for K-means. The main issue with the 2 clustering techniques used is that they are both at risk of falling into local minima. This is especially true for K-means, which is very sensitive to the initialisation of the centroids\cite[p. 263]{sklearn_book}. This could be the reason for some of the disagreements. Futhermore, the Baseline dataset is quite high dimensional, with 1000 features.  
 
 \begin{figure}[htbp]
     \centering
@@ -601,6 +625,8 @@ Here, the agreement can be seen between the 2 techniques. The top 40 features cl
 \end{figure}
 
 Figure 12 and 13 show the data colour coded according to the first and second most important features for both clustering techniques. The first most important feature seems to help in differentiating between the 2 right and left clusters, and the bottom cluster, comparing with figure 10 and 11. The second most important feature seems to help in differentiating between the right and left clusters, again looking at Figure 10 and 11.
+
+
 \bibliographystyle{plain}
 \bibliography{refs.bib}
 
