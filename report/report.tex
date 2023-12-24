@@ -370,13 +370,19 @@ Here, a k-Nearest Neighbour imputation is used. As said above, this takes into a
 
 \subsection*{(d)}
 
-To detect outliers, one can calculate the z-scores of each features by standardizing the data. This is done by shifitng/subtracting feature values by their mean and dividing by their standard deviation\cite[p. 73]{sklearn_book}. This thus expresses each value by how many standard deviations they are from the mean. By then setting a threshold of 3, values furhter than 3 standard deviations can be identified.
+To detect outliers, one can calculate the z-scores of each features by standardizing the data. This is done by shifitng/subtracting feature values by their mean and dividing by their standard deviation\cite[p. 73]{sklearn_book}. This thus expresses each value by how many standard deviations they are from the mean. By then setting a threshold of 3, values further than 3 standard deviations can be identified. Here, outliers were found in numerous rows and over all features. Over 2900 were found in the total of 204,000 data points in the dataset.
 
 \subsection*{(e)}
 
-Multiple K-NN imputation.
+Here, a KNN-imputer was used. By training the model on the data with the outliers still there, the outliers can then be dropped by setting them to NaN. Then using the imputer, the missing values/outliers are imputed/corrected with new values that reflect the overall dataset rather than the outliers. After imputation, the number of outliers is reduced to 1385. 
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c_2.png}
+    \caption{\textbf{Density plots of features before and after outlier correction}}
+\end{figure}
 
+Some of those distributions are not plotted as the variance of those features is now 0, after the imputation. Figure 6 shows that some distributions have been narrowed, which is what is expected from correcting outliers.
 
 \section*{Question 4}
 
