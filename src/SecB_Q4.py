@@ -5,7 +5,6 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, RepeatedStratifiedKFold, GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import LocalOutlierFactor
 import Plot_funcs as pf
 
 
@@ -59,32 +58,6 @@ print(
     )
 
 Baseline_no_labels = Baseline_no_labels.drop(columns=Low_Var.index.tolist())
-
-
-# Any outliers?
-# Wait to figure out 3(d,e)
-scaler = StandardScaler()
-scaler.fit(Baseline_no_labels)
-
-pd.DataFrame(scaler.transform(Baseline_no_labels), columns=Baseline_no_labels.columns, index=Baseline_no_labels.index)
-# Apply the threshold of 3 standard deviations
-
-Any_outliers = np.abs(Baseline_no_labels) > 3
-Outlier_count = Any_outliers.sum().sum()
-
-# Local outlier factor
-LOF = LocalOutlierFactor()
-LOF.fit_predict(Baseline_no_labels)
-LOF = LOF.negative_outlier_factor_
-
-Any_outliers = LOF < -1.1
-
-Outlier_count = Any_outliers.sum().sum()
-
-print('Number of outliers (out of {} data points): ', Outlier_count)
-print('----------------------------------')
-
-print('The outliers are in rows: ',  Baseline_no_labels[~Any_outliers].index.values)
 
 # Any duplicated rows?
 duplicates = Baseline_no_labels[Baseline_no_labels.duplicated(keep=False)]
@@ -232,8 +205,15 @@ print('------------------------')
 print('--------part (f)--------')
 print('------------------------')
 
+# Scale the data
+scaler = StandardScaler()
+scaler.fit(Baseline_no_labels)
 
-Baseline_no_labels_train, Baseline_no_labels_test, Labels_train, Labels_test = train_test_split(Baseline_no_labels, Labels, test_size=0.2, random_state=42)
+Baseline_no_labels_scaled = pd.DataFrame(scaler.transform(Baseline_no_labels), columns=Baseline_no_labels.columns, index=Baseline_no_labels.index)
+
+
+
+Baseline_no_labels_train, Baseline_no_labels_test, Labels_train, Labels_test = train_test_split(Baseline_no_labels_scaled, Labels, test_size=0.2, random_state=42)
 
 
 # Set up SVM with Grid Search and Cross-Validation
@@ -260,11 +240,11 @@ feature_importances = pd.Series(feature_importance, index=features)
 
 
 # Print out the feature importances
-pf.B_Q4e(feature_importances, 3)
+pf.B_Q4e(feature_importances, 2)
 
 # Retrain the model with the top 20 features
 top_20_features = feature_importances.nlargest(20).index.tolist()
-Baseline_top_20 = Baseline_no_labels[top_20_features]
+Baseline_top_20 = Baseline_no_labels_scaled[top_20_features]
 
 # Split the data into training and test sets
 Baseline_top_20_train, Baseline_top_20_test, Labels_train, Labels_test = train_test_split(Baseline_top_20, Labels, test_size=0.2, random_state=42)

@@ -1,8 +1,6 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-from scipy import stats
 from warnings import simplefilter
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
@@ -58,20 +56,16 @@ A_fea = A.drop(['classification', 'Unnamed: 0'], axis=1)
 #Then scaling the data:
 scaler = StandardScaler()
 scaler.fit(A_fea)
-A_fea = pd.DataFrame(scaler.transform(A_fea), columns=A_fea.columns, index=A_fea.index)
+A_fea_scaled = pd.DataFrame(scaler.transform(A_fea), columns=A_fea.columns, index=A_fea.index)
 
 
 # Apply PCA
 pca = PCA(n_components=2)
-pca_fit = pca.fit(A_fea)
-A_pca = pca_fit.transform(A_fea)
+pca_fit = pca.fit(A_fea_scaled)
+A_pca = pca_fit.transform(A_fea_scaled)
 
 # Create a dataframe with the 2 PCA features
 A_pca_df = pd.DataFrame(A_pca, columns=['PC1', 'PC2'])
-
-# Check length of the PCA data, should be same as the original data
-if len(A_pca_df) != len(A_fea):
-    raise RuntimeError('PCA data length does not match original data length.')
 
 
 # Plot the scatter plot of the PCA visualised data
@@ -83,10 +77,12 @@ pf.A_Q1b(A_pca_df)
 # ------------------------------------------------------------------------------
 # (c) Default k-means clustering
 # ------------------------------------------------------------------------------
-
+print('----------------------------------')
+print("--------------Part c--------------")
+print('----------------------------------')
 # Partiton the data into 2 training sets of equal size
 
-A_1, A_2 = train_test_split(A_fea, test_size=0.5, random_state=42)
+A_1, A_2 = train_test_split(A_fea_scaled, test_size=0.5, random_state=42)
 
 # Apply k-means clustering on each of the training sets
 
@@ -107,9 +103,7 @@ clustering_2 = Model2.predict(A_1)
 contingency_table1 = pd.crosstab(clustering_2, train1_cluster, rownames=['Model 2'], colnames=['Model 1']) 
 contingency_table2 = pd.crosstab(clustering_1, train2_cluster, rownames=['Model 1'], colnames=['Model 2']) 
 
-print('----------------------------------')
-print("--------------Part c--------------")
-print('----------------------------------')
+
 print("Contingency table of the clusters for A1:\n", contingency_table1)
 print("Contingency table of the clusters for A2:\n", contingency_table2)
 
@@ -131,7 +125,7 @@ print('----------------------------------')
 # Get the silhouette scores for different cluster numbers
 silhouette_scores = []
 for k in range(2, 8):
-    Model = KMeans(n_clusters=k, random_state=42).fit(A_fea)
+    Model = KMeans(n_clusters=k, random_state=41).fit(A_fea)
     cluster_labels = Model.labels_
     silhouette_scores.append(silhouette_score(A_fea, cluster_labels))
 

@@ -145,23 +145,21 @@
 
 \section*{Question 1}
 
-The aim of this question is to explore the dataset and conduct some processing of the data. Conducting a check for missing values, which there were none, the data is explore in the following ways.
-
 \subsection*{(a)}
 
-The data first needs to be visualised in some way. Now because there are 500 features, and therefore 500 dimensions in the feature-space, this means that for now, only visualisations of each feature separately is useful. Thus a density plot of the first 20 features is obtained and shown below (Figure 1).  The main observation is that some features are very similar to each other, following similar distributions. A rough assumption is there are overall 3\-4 groups of highly correlated features for the entire dataset. The most common one has a very strong peak at 0, with a much smaller one at around 1. Another is bimodal, with peaks at 0 and 3. And the last one is also bimodal, with peaks at 0 and a stonger one at approximately 4. If the features can be grouped then one could reduce the dimensionality of the feature-space to 1 representative feature from each group.
+To explore the data, it needs to be visualised in some way. This dataset being high-dimensional with 500 dimensions in the feature-space, makes visualisation tough. Thus, each feature is visualised separately with density plot. Densities of the first 20 features are obtained and shown below (Figure 1). The main observation is that some features follow very similar distributions. A rough assumption is thus that there are overall 3\-4 groups of highly correlated features in the entire dataset. The most common one has a very strong peak at 0, with a much smaller one at around 1. Another is bimodal, with peaks at 0 and 3. And the last one is also bimodal, with peaks at 0 and a stonger one at approximately 4. If the features can be grouped then one could reduce the dimensionality of the feature-space to 1 representative feature from each group.
 
 \begin{figure}[hp]
     \centering
     \includegraphics[width=0.8\textwidth]{../Plots/A_Q1a.png}
-    \caption{ \textbf{Density plots of the first 20 features, grouped by similarity}. The x-axis was set to the same scale for all plots, for easire comparison. The y-axis is however different for all plots.}
+    \caption{ \textbf{Density plots of the first 20 features, grouped by similarity}. The x-axis was set to the same scale for all plots, for easier comparison. The y-axis is however different for all plots.}
 \end{figure}
 
 \newpage
 
 \subsection*{(b)}
 
-Thus, Principle Component Analysis (PCA) is conducted on the dataset. PCA enables one to derive a lower-dimensional set of features from the full \textbf{A} dataset. This is done by finding the direction in which the observations have the greatest variance, for the full feature space\cite[pp. 255-257]{james2013introduction}. This is done on the entire dataset, not just the first 20 features. Using \texttt{scikit-learn}'s PCA function, getting the first 2 Principles Components (PC). The dimensionaly reduced dataset was obtained and the data was plotted in the following scatter plot (Figure 2).
+Thus, Principle Component Analysis (PCA) is conducted on the dataset. PCA enables one to derive a lower-dimensional set of features from the full \textbf{A} dataset. This is done by finding the direction in which the observations have the greatest variance, for the full feature space\cite[pp. 255-257]{james2013introduction}. This is done on the entire dataset, not just the first 20 features. Using \texttt{scikit-learn}'s PCA function, getting the first 2 Principles Components (PC). 
 
 \begin{figure}[h]
     \centering
@@ -175,7 +173,7 @@ From Figure 2, the bimodal separation seen in some of the first 20 features is s
 
 From this, clustering can be run to try and see how they would compare to the distribution observed. The \texttt{scikit-learn} KMeans clustering algorithm was used, with all parameters set to their default values, apart from the random state.
 The default number of clusters is 8. Now from Figure 1 and figure 2, it seems unlikely that there are 8 clusters in the data. This is one of the risks of K-means clustering as it will ``find'' 8 clusters, even if there are not 8 clusters in the data. To assess if ``default'' K-means clustering performs adequatly, the data is split into 2. For both these splits, clustering is run and then applied to the other split.  
-The reason this can be done is that K-means clustering's main result is the position of points called centroids, which are the geometrical centres of each clusters (when defining the centroids from the feature means). In terms of their significance they are each the most representative points of each cluster. One of the \texttt{scikit-learn} K-means output is those \texttt{cluster\_centers\_}. Then when using the \texttt{.predict{}} method after fitting the model, i.e. clustering one half of the date, the other half can be clustered base on the distance of each point to the centroids of the clusters. This is done for both splits of the data and the results are shown in the tables below:
+The reason this can be done is that K-means clustering's main result is the position of points called centroids, which are the geometrical centres of each clusters (when defining the centroids from the feature means). In terms of their significance they are each the most representative points of each cluster\cite[p. 243]{sklearn_book}. One of the \texttt{scikit-learn} K-means output is those \texttt{cluster\_centers\_}. Then when using the \texttt{.predict{}} method after fitting the model, i.e.\ clustering one half of the data, the other half can be clustered base on the distance of each point to the centroids. This is done for both splits of the data and the results are shown in the tables below:
 
 \begin{table}[h]
 \centering
@@ -222,17 +220,18 @@ The reason this can be done is that K-means clustering's main result is the posi
 
 \subsection*{(d)}
 
-As can be seen, cluster 6 for the 2$^{nd}$ clustering (columns) is empty. This can be explained by the initialization of the centroids. Indeed the K-means clustering has to place the centroids somewhere at the start, and they are then updated based on which points are closest to it and their mean. If the centroid for cluster 6 in the 2$^{nd}$ clustering happened to have no points closer to it than other centroids, it stayed where it was for the whole clustering process\cite{scikit-learn}. Overall, the fact that a too large cluster number was selected for the model means there is almost no agreement between clusters (Table 1).  This means that the clusters are not very stable. Stability here refers to getting similar clusters when clustering the same or very similar datasets. Furthermore, the number used to designate the cluster is not the same in the 2 clusterings. In other words, it could be the case that the relatively greater agreement between cluster 1 from the 1$^{st}$ clustering (rows) and cluster 2 from the 2$^{nd}$ clustering (columns), is due to the fact they have centroids that are close to each other. But they happened to have different numbers. Regardless the agreement is small since all values in the table are small.  
+As can be seen, some clusters are empty. This can be explained by the initialization of the centroids. Indeed, K-means clustering has to place the centroids somewhere at the start, and they are then updated based on which points are closest to it and their mean. If the centroid happened to have no points closer to it than other centroids at the start, it then stays where it is for the whole clustering process\cite{kmeans_sklearn}. Overall, the fact that a too large cluster number was selected for the model means there is little agreement between clusters (Table 1). Note the cluster numbers are assigned ``randomly'' and so one could have the exact same clusters but one is cluster 4 and the other cluster 7. Even considering this, we'd expect only have 8 large numbers, each on a different row and column. Seeing there are numerous small groups of agreeing clusterings, this is not the case and the clustering is not very stable. Stability here refers to how constant the clusters are when clustering the same or very similar datasets. 
 
-Thus, we repeat the clustering for a lower number of clusters, 2, based on the visualisation of the data, Fig 2, and ignboring the actual knowledge of there being 3 clusters. We get the following results:
+Thus, clustering is done again for a lower number of clusters. Based on the visualisation of the data, Fig 2, and the fact the contingency tables show 3 main groups of samples for which the clusterings agree. The results are shown in Figure 3.  
 
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d_2clusters_A1.png}
     \includegraphics[width=0.85\textwidth]{../Plots/A_Q1d_2clusters_A2.png}
     \caption{\textbf{Scatter plot of the 2 clusterings} The colors indicate the cluster membership.}
 \end{figure}
+
 
 \subsection*{(e)}
 
@@ -240,10 +239,11 @@ Here, with the 2 clusters, both models agree on how to separate the data.
 
 Conducting PCA before and after clustering is useful in both cases. One gives a clue as to how many clusters one should use in the K-means training and the other enables one to visualise the clustering results. One additional thing is that the K-means could have been done on the PCA reduced dataset, which would have been a 2D dataset. The impact on performance in that case is not completely clear.
 
+\newpage
 
 \section*{Question 2}
 
-The same dataset as in A is given. But here, the aim is to deal with duplicated observations and missing labels there are in this version of the dataset.
+The same dataset as in A is given, but with duplicated observations and missing labels introduced.
 
 \subsection*{(a)}
 
@@ -275,24 +275,24 @@ Samples: [48, 50, 64, 66, 86, 94, 103, 120, 121, 127, 137, 139, 140, 166, 167, 1
 208, 213, 218, 230, 240, 269, 273, 280, 311, 317, 325, 331, 364, 371, 372, 379, 402, 404,
 409, 416, 429, 444]
 
-\caption{List of duplicated rows.}
+\caption{List of the 40 duplicated rows.}
 \end{table}
 
-One way to address the dupicates is to use a supervised learning method to train a model on the non-duplicated rows and then predict the labels for the duplicated rows. Once we obtain these label predictions, we compare them with the duplicates' labels and see which ones match. If one does, then we keep that row and discard the other. If both match, we drop one of them to avoid having duplicates, even correctly labelled ones. And if none match, we drop both rows.
+One way to address the dupicates is to use a supervised learning method to train a model on the non-duplicated rows' labels and then predict them for the duplicated rows. Once we obtain these label predictions, we compare them with the duplicates' labels and see which ones match. If one does, then we keep that row and discard the other. If both match, we keep only one of them to avoid having duplicates, even correctly labelled ones. And if none match, we drop both rows.
 
-Using this method, the following rowws were dropped:
+Using this method, the following rows were dropped:
 
 \begin{table}[h]
     \centering
     Samples: [29, 82, 100, 116, 118, 146, 172, 209, 219, 259, 290, 296, 350, 358, 381, 395]
-    \caption{List of duplicated rows.}
+    \caption{List of mislabelled dropped rows}
 \end{table}
 
-Leaving 16 duplicated rows but correctly labelled. In this case we dropped half of those, dropping samples: [106, 145, 192, 248, 252, 310, 388, 423]. 
+Leaving 16 duplicated rows but correctly labelled, meaning half of which need to be dropped. The following samples were dropped: [106, 145, 192, 248, 252, 310, 388, 423]. 
 
 \subsection*{(c)}
 
-Missing labels is sometimes referred to as a semi-supervised learning case\cite[p. 24]{james2013introduction}.Here are 2 ways observations with missing labels can be dealt with. The first is model based imputation. This relies on training a machine learning model on the dataset with observations with missing labels removed, and then predicting the labels for these observations. The choice of model here is broad since the total number of missing values is not too great, and multiple models would be appropriate. This method takes into account relationships between features though runs the risk of an invalid prediction and therefore affecting the result of any model training conducted subsequently. Another more brute-force approach is a simple removal of those observations. This has the advantage of simplicity though brings loss of information, and becomes inappropriate in a scenario where many observations have missing labels. For that second method especially, it is important to consider why the labels are missing. They can be Missing At Random (MAR), meaning there is no underlying reason for that value missing. On the other hand they could be Missing Not At Random (MNAR), meaning that the data missing, sometimes combined with the values of the features for that observation, carry an important meaning. In that case, dropping these observations would be an important loss of information\cite[pp. 515-516]{james2013introduction}.
+Missing labels cases are sometimes referred to as a semi-supervised learning case\cite[p. 24]{james2013introduction}.Here are 2 ways observations with missing labels can be dealt with. The first is model based imputation. Similarly to the previous question, this relies on training a machine learning model on a complete version of the dataset (sometimes a subset), and then predicting the labels for the observations with missing labels. The choice of model here is broad since the total number of missing values is not too great, and multiple models would be appropriate. This method takes into account relationships between features though runs the risk of an invalid prediction and therefore affecting the result of any model training conducted subsequently. Another more brute-force approach is a simple removal of those observations. This has the advantage of simplicity though brings loss of information, and becomes inappropriate in a scenario where many observations have missing labels. For that second method especially, it is important to consider why the labels are missing. They can be Missing At Random (MAR), meaning there is no underlying reason for that value missing. On the other hand they could be Missing Not At Random (MNAR), meaning that the data missing, sometimes combined with the values of the features for that observation, carry an important meaning. In that case, dropping these observations would be an important loss of information\cite[pp. 515-516]{james2013introduction}.
 
 \subsection*{(d)}
 
@@ -314,11 +314,11 @@ Here, a model based imputation method is used, assuming the labels are MAR. A mu
     \caption{Frequency of the labels in the \textbf{B} dataset, after missing label prediction.}
     \end{table}
 
-Table .. shows a slight tendency to predict labels 1.0 and 2.0 compared to 4.0, though there was no strong proof the observations with missing vlaues would follow the original proportions.
+Table 6 shows a slight tendency to predict labels 1.0 and 2.0 compared to 4.0, though the observations with missing values do not have to follow the original proportions.
 
 \section*{Question 3}
 
-\subsection*{a}
+\subsection*{(a)}
 
 In this dataset, values in various observations and features are missing. 5 observations have missing values. These are samples: [137, 142, 230, 262, 388]. For each of these rows, the following features are missing:
 
@@ -338,17 +338,17 @@ One way to improve this result is by conducting mulitple imputations. Choosing a
 Here, a k-Nearest Neighbour imputation is used. As said above, this takes into account feature relationships while not being too computationally expensive. The number of neighbours $k$ is set to 10. This is from training a kNN model in Q2 and found an optimal number of neighbours to be 10. Comparing the distribution within the concerned features before and after imputation is the plot below:
 
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c.png}
     \caption{\textbf{Density plots of features before and a} Density contours are also shown.}
 \end{figure}
 
-\subsection{(d)}
+\subsection*{(d)}
 
 To detect outliers, one can calculate the z-scores of each features by standardizing the data. This is done by shifitng/subtracting feature values by their mean and dividing by their standard deviation\cite[p. 73]{sklearn_book}. This thus expresses each value by how many standard deviations they are from the mean. By then setting a threshold of 3, values furhter than 3 standard deviations can be identified.
 
-\subsection{(e)}
+\subsection*{(e)}
 
 Multiple K-NN imputation.
 
@@ -379,7 +379,7 @@ Outliers were then dealt with
 Finally, 2 pairs of highly correlated features (> 0.9) were found and one of each pairs were dropped: Feature 300 and 345, and Feature 869 and 954.
 
 
-\subsection{c}
+\subsection*{(c)}
 
 The random forest classifier was trained on default parameters: 100 trees, Gini index splitting criteria, no max depth set, and the max number of features to split from set to the squareroot of the total number of features.  
 
@@ -392,7 +392,7 @@ Training this model, a test set classification error of 0.05 is found.
 This number of trees in the random forest can be optimised using an Out-Of-Bag (OOB) score. This works from the fact each tree is built for a bootstrapped sub-sample of the dataset. Leaving an "Out-Of-Bag" sample the trees for which that sample was OOB can be tested upon. An OOB classification error can thus be obtained, for each number of trees\cite[p. 345]{james2013introduction}.  
 
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{../Plots/B_Q4d_1.png}
     \caption{\textbf{OOB error vs number of trees} Density contours are also shown.}
@@ -410,22 +410,38 @@ Re-running the model for the optimal tree number, the test-classification error 
 
 One characteristic of the random forest classifier is it can give us the relative importance of features. It is computed as how much of a reduction in the Gini index (or other used criterion) is brought by that feature. Were it not for the bootstrapping and subset of features to split from, there would not be enough information for that measure to be computed accurately\cite[pp. 345-346]{james2013introduction}. In this case, we obtained the following plot, with the 50 most important features:
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{../Plots/B_Q4e_1.png}
-    \caption{\textbf{Feature importance}, for the 50 most important features}
+    \includegraphics[width=0.5\textwidth]{../Plots/B_Q4e_1.png}
+    \caption{\textbf{Random Forest Feature Importance}, for the 50 most important features}
 \end{figure}
 
 We see that feature importance decreases very rapidly before steadily decreasing slowly. Taking the first 20, another random forest model can be trained. With this model, a test set classification error of 0.0999 was obtained. As expected, the performance is slightly lower but considering the amount by which computational complexity was decreased, this is a very positive result.
 
 
-(f) Repeatsteps(b),(c)and(e)foroneothersupervisedlearningclassifier. Compare and contrast the two classification approaches and your results for each.
+\subsection*{(f)}
 
+Here, the previous questions are reproduced using another supervised learning method. The chosen method is Support Vector Machines (SVM), as it is quite good when the data is high dimensional, and even when there are more dimensions than samples \cite{svm_sklearn}. However, in order to get the feature importances back from the SVM model, one needs to use a linear kernel. 
 
+The data was preprocessed in this same way as for the Random Forest Classifier. Duplicates, low-variance, and higly correlated rows and features are dealt with, and outliers are left alone since the SVM algorithm is robust to them.  
 
+Running this, a test set classification error of 0.0899 was obtained. And using the \texttt{coeff\_} output of the model, the feature importances were obtained and plotted in figure 7. As one cans see there is some agreement between the 2 models, with the most important feature being the same and a few features with relatively similar importance (Fea36, Fea354,\ldots)  
+Training the SVM model on just the most important feature, the test set classification error roughly doubles but stays indicative of good performance.
+
+\begin{figure}{h}
+    \centering
+    \includegraphics[width=0.5\textwidth]{../Plots/B_Q4e_2.png}
+    \caption{\textbf{SVM Feature Importance}, for the 50 most important features}
+\end{figure}
+
+\newpage
 
 \section*{Question 5}
 
+\subsection*{(a)}
+
+Two different clustering techniques are explored in this question. One of them will be K-means which has been already discussed partly. It will place a desired number of initial centroids in the feature space and update their position based on cluster members until convergence. The two main outputs are then the cluster centroids' final location and the cluster memberships of all the datasets' points.  
+The second technique will Gaussian Mixture Models. The idea behind this is to assume the entire data is distributed as the sum of multiple Gaussian distributions with unknown parameters\cite[p. 260]{sklearn_book}. 
 
 
 
