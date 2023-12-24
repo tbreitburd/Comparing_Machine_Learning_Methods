@@ -408,14 +408,14 @@ Outliers were then dealt with
 
 Finally, 2 pairs of highly correlated features (> 0.9) were found and one of each pairs were dropped: Feature 300 and 345, and Feature 869 and 954.
 
+Because the Random Forest classifier is robust to outliers, outliers are not dealt with\cite[pp. 346-347]{james2013introduction}.
+
 
 \subsection*{(c)}
 
 The random forest classifier was trained on default parameters: 100 trees, Gini index splitting criteria, no max depth set, and the max number of features to split from set to the squareroot of the total number of features.  
 
-Training this model, a test set classification error of 0.05 is found.
-
-(d) Optimise the algorithm with respect to the number of trees in the random forest. You should be able to do this without explicitly performing cross-validation.
+Training this model, a test set classification error of 0.04 is found.
 
 \subsection*{(d)}
 
@@ -428,12 +428,9 @@ This number of trees in the random forest can be optimised using an Out-Of-Bag (
     \caption{\textbf{OOB error vs number of trees} Density contours are also shown.}
 \end{figure}
 
-Thus, the optimal number of trees is around 170-200, where the OOB error stabilizes, and going further only makes the model more computationally expensive.
+Thus, the optimal number of trees is around 150, where the OOB error stabilizes, and going further only makes the model more computationally expensive.
 
 Re-running the model for the optimal tree number, the test-classification error now is 0.04.
-
-
-(e) Calculate the feature importance. In your report, describe and interpret the feature importances. Retrain the model using a subset of the most important features. In your report, indicate which features you have chosen and compare the retrained classifier with the original classifier.
 
 
 \subsection*{(e)}
@@ -446,16 +443,16 @@ One characteristic of the random forest classifier is it can give us the relativ
     \caption{\textbf{Random Forest Feature Importance}, for the 50 most important features}
 \end{figure}
 
-We see that feature importance decreases very rapidly before steadily decreasing slowly. Taking the first 20, another random forest model can be trained. With this model, a test set classification error of 0.0999 was obtained. As expected, the performance is slightly lower but considering the amount by which computational complexity was decreased, this is a very positive result.
+We see that feature importance decreases very rapidly before steadily decreasing slowly. Taking the first 20, another random forest model can be trained. With this model, a test set classification error of 0.0699 was obtained. As expected, the performance is slightly lower but considering the amount by which computational complexity was decreased, this is a very positive result.
 
 
 \subsection*{(f)}
 
 Here, the previous questions (b, c, e) are reproduced using another supervised learning method. The chosen method is Support Vector Machines (SVM), as it is quite good when the data is high dimensional, and even when there are more dimensions than samples \cite{svm_sklearn}. However, in order to get the feature importances back from the SVM model, one needs to use a linear kernel. 
 
-The data was preprocessed in this same way as for the Random Forest Classifier. Duplicates, low-variance, and higly correlated rows and features are dealt with, and outliers are left alone since the SVM algorithm is robust to them.  
+The data was preprocessed in this same way as for the Random Forest Classifier. Duplicates, low-variance, and highly correlated rows and features are dealt with, and outliers are left alone since the SVM algorithm is robust to them.  
 
-Running this, a test set classification error of 0.0899 was obtained. And using the \texttt{coeff\_} output of the model, the feature importances were obtained and plotted in figure 7. As one cans see there is some agreement between the 2 models, with the most important feature being the same and a few features with relatively similar importance (Fea36, Fea354,\ldots)  
+Running this, a test set classification error of 0.0799 was obtained. And using the \texttt{coeff\_} output of the model, the feature importances were obtained and plotted in figure 7. As one cans see there is some agreement between the 2 models, with the most important feature being the same and a few features with relatively similar importance (Fea36, Fea354,\ldots)  
 Training the SVM model on just the most important feature, the test set classification error roughly doubles but stays indicative of good performance.
 
 \begin{figure}{h}
