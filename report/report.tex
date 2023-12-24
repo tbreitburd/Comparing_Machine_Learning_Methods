@@ -441,7 +441,9 @@ Training the SVM model on just the most important feature, the test set classifi
 \subsection*{(a)}
 
 Two different clustering techniques are explored in this question. One of them will be K-means which has been already discussed partly. It will place a desired number of initial centroids in the feature space and update their position based on cluster members until convergence. The two main outputs are then the cluster centroids' final location and the cluster memberships of all the datasets' points.  
-The second technique will Gaussian Mixture Models. The idea behind this is to assume the entire data is distributed as the sum of multiple Gaussian distributions with unknown parameters\cite[p. 260]{sklearn_book}. 
+The second technique will Gaussian Mixture Models. The idea behind this is to assume the entire data is distributed as the sum of multiple multivariate Gaussian distributions with unknown parameters\cite[p. 260]{sklearn_book}. The main outputs for this clustering technique are the parameters of those gaussians (means and covariance matrices), and the weights for each of those Gaussians to be used in the sum.  
+
+Using these methods
 
 
 

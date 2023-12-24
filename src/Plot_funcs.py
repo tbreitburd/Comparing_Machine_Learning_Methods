@@ -254,3 +254,89 @@ def B_Q4e(feature_importances, num):
     plt.ylabel('Feature')
     plt.tight_layout()
     plt.savefig('Plots/B_Q4e_' + str(num) + '.png')
+
+
+def B_Q5a_silhouette(silhouette_scores):
+    plt.figure(figsize=(6, 5))
+    plt.plot(range(2, 8), silhouette_scores, marker='o')
+    plt.grid()
+    plt.xlabel('Number of clusters')
+    plt.ylabel('Silhouette score')
+    plt.title('Silhouette score for different cluster numbers')
+    plt.tight_layout()
+    plt.savefig('Plots/B_Q5a_silhouette.png')
+
+
+def B_Q5c_1( data_pca, clustering1, clustering2, PATH):
+    """
+    Plots the data, color coded by cluster, for two different models.
+    
+    Parameters
+    ----------
+    clustering1 : array-like
+        The cluster labels of the first model.
+    clustering2 : array-like
+        The cluster labels of the second model.
+    k : int
+        The number of clusters.
+    """
+    # Plot the scatter plot of the PCA visualised data
+    # with density contours overlaid
+    fig, axes = plt.subplots(1,2,figsize=(10, 5))
+
+    # Scatter plot for the 1st model
+    sns.scatterplot(x=np.array(data_pca['PC1']), 
+                    y=np.array(data_pca['PC2']),
+                    ax = axes[0], hue=clustering1, palette='coolwarm')
+
+    plt.xlabel('PC1')
+    plt.ylabel('PC2')
+    
+    # Scatter plot for the 2nd model
+    sns.scatterplot(x=np.array(data_pca['PC1']), 
+                    y=np.array(data_pca['PC2']), 
+                    ax = axes[1], hue=clustering2, palette='coolwarm')
+
+    plt.xlabel('PC1')
+    plt.ylabel(None)
+    plt.suptitle('Scatter Plot of the 2 clustering techniques,\n K-Means on the left and GMM on the right')
+    plt.tight_layout()
+    plt.savefig('Plots/'+PATH+'.png')
+    plt.close()
+
+def B_Q5c_2(data, feature1, feature2, PATH):
+    """
+    Plots the data, color coded by cluster, for two different models.
+    
+    Parameters
+    ----------
+    clustering1 : array-like
+        The cluster labels of the first model.
+    clustering2 : array-like
+        The cluster labels of the second model.
+    k : int
+        The number of clusters.
+    """
+    # Plot the scatter plot of the PCA visualised data
+    # with density contours overlaid
+    fig, axes = plt.subplots(1,2,figsize=(10, 5))
+
+    # Scatter plot for the 1st model with colour depending on the value of feature1
+    sns.scatterplot(x=np.array(data['PC1']), 
+                    y=np.array(data['PC2']),
+                    ax = axes[0], hue=feature1, palette='coolwarm')
+
+    plt.xlabel('PC1')
+    plt.ylabel('PC2')
+    
+    # Scatter plot for the 2nd model
+    sns.scatterplot(x=np.array(data['PC1']), 
+                    y=np.array(data['PC2']), 
+                    ax = axes[1], hue=feature2, palette='coolwarm')
+
+    plt.xlabel('PC1')
+    plt.ylabel(None)
+    plt.suptitle('Scatter Plot of the data,\n according to most important feature (Feature)')
+    plt.tight_layout()
+    plt.savefig('Plots/'+PATH+'.png')
+    plt.close()

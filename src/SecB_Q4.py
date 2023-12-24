@@ -240,7 +240,7 @@ feature_importances = pd.Series(feature_importance, index=features)
 
 
 # Print out the feature importances
-pf.B_Q4e(feature_importances, 2)
+pf.B_Q4e(feature_importances, 3)
 
 # Retrain the model with the top 20 features
 top_20_features = feature_importances.nlargest(20).index.tolist()
