@@ -23,8 +23,6 @@ Baseline = Baseline.drop(columns=['Unnamed: 0'])
 Baseline_no_labels = Baseline.drop(columns=['type'])
 Labels = Baseline['type']
 
-# Get the frequency of each class
-print(Baseline['type'].value_counts())
 
 # ---------------- Preprocessing ------------------
 
@@ -144,6 +142,10 @@ scaler = MinMaxScaler()
 scaler.fit(Baseline_no_labels)
 Baseline_no_labels_scaled = scaler.transform(Baseline_no_labels)
 
+# Get the frequency of each class
+print('The frequency of each class is:')
+print(Baseline['type'].value_counts())
+
 # ---------------------------------------------------------------------------------------------
 # (a) Apply 2 different clustering methods
 # ---------------------------------------------------------------------------------------------
@@ -168,29 +170,29 @@ model = KMeans(n_clusters=3, n_init = 10, random_state=42)
 model.fit(Baseline_no_labels)
 
 # Get the predictions
-KM_clustering = model.predict(Baseline_no_labels)
+KM_clustering_total = model.predict(Baseline_no_labels)
 
 # Get those predictions in a dataframe
-KM_clusters = pd.DataFrame(KM_clustering, columns=['Cluster'])
+KM_clusters_total = pd.DataFrame(KM_clustering_total, columns=['Cluster'])
 
 # -------- GMM clustering --------
 
 GMM = GaussianMixture(n_components=3, random_state=42).fit(Baseline_no_labels_pca)
-GMM_clustering = GMM.predict(Baseline_no_labels_pca)
+GMM_clustering_total = GMM.predict(Baseline_no_labels_pca)
 
 # Get those predictions in a dataframe
-GMM_clusters = pd.DataFrame(GMM_clustering, columns=['Cluster'])
+GMM_clusters_total = pd.DataFrame(GMM_clustering_total, columns=['Cluster'])
 
 # Get the label frequencies for both models
 print('K-means clustering label frequencies:')
-print(KM_clusters['Cluster'].value_counts())
+print(KM_clusters_total['Cluster'].value_counts())
 
 print('GMM clustering label frequencies:')
-print(GMM_clusters['Cluster'].value_counts())
+print(GMM_clusters_total['Cluster'].value_counts())
 
 # Print out a contingency table
-contingency_table = pd.crosstab(KM_clusters['Cluster'], GMM_clusters['Cluster'], rownames=['K-means'], colnames=['GMM'])
-print('Contingency table for the two models:')
+contingency_table = pd.crosstab(KM_clusters_total['Cluster'], GMM_clusters_total['Cluster'], rownames=['K-means'], colnames=['GMM'])
+print('Contingency table for the two models, for all features:')
 print(contingency_table)
 
 
@@ -203,7 +205,7 @@ print('----------------------------------------------')
 
 # Using the random forest classifier from Q4, we get the feature importances
 Model_KM = RandomForestClassifier(n_estimators=150, random_state=42)
-Model_KM.fit(Baseline_no_labels, KM_clustering)
+Model_KM.fit(Baseline_no_labels, KM_clustering_total)
 
 # Get the feature importances
 KM_features = Baseline_no_labels.columns.values.tolist()
@@ -224,15 +226,15 @@ model = KMeans(n_clusters=3, n_init = 10, random_state=42)
 model.fit(Baseline_top_40_KM)
 
 # Get the predictions
-KM_clustering = model.predict(Baseline_top_40_KM)
+KM_clustering_t40 = model.predict(Baseline_top_40_KM)
 
 # Get those predictions in a dataframe
-KM_clusters = pd.DataFrame(KM_clustering, columns=['Cluster'])
+KM_clusters_t40 = pd.DataFrame(KM_clustering_t40, columns=['Cluster'])
 
 
 # Using the random forest classifier from Q4, we get the feature importances
 Model_GMM = RandomForestClassifier(n_estimators=150, random_state=42)
-Model_GMM.fit(Baseline_no_labels, GMM_clustering)
+Model_GMM.fit(Baseline_no_labels, GMM_clustering_total)
 
 # Get the feature importances
 GMM_features = Baseline_no_labels.columns.values.tolist()
@@ -240,7 +242,7 @@ GMM_feature_importance = Model_GMM.feature_importances_
 
 GMM_feature_importances = pd.Series(GMM_feature_importance, index=GMM_features)
 
-pf.B_Q4e(GMM_feature_importances, 3)
+pf.B_Q4e(GMM_feature_importances, 4)
 
 
 # Cluster again only using the subset of features
@@ -256,23 +258,30 @@ Baseline_top_40_pca_GMM = pca.transform(Baseline_top_40_GMM)
 Baseline_top_40_pca_GMM = pd.DataFrame(Baseline_top_40_pca_GMM, columns=['PC1', 'PC2', 'PC3','PC4'])
 
 GMM = GaussianMixture(n_components=3, random_state=42).fit(Baseline_top_40_pca_GMM)
-GMM_clustering = GMM.predict(Baseline_top_40_pca_GMM)
+GMM_clustering_t40 = GMM.predict(Baseline_top_40_pca_GMM)
 
 # Get those predictions in a dataframe
-GMM_clusters = pd.DataFrame(GMM_clustering, columns=['Cluster'])
+GMM_clusters_t40 = pd.DataFrame(GMM_clustering_t40, columns=['Cluster'])
 
 # Get the label frequencies for both models
 print('K-means clustering label frequencies:')
-print(KM_clusters['Cluster'].value_counts())
+print(KM_clusters_t40['Cluster'].value_counts())
 
 print('GMM clustering label frequencies:')
-print(GMM_clusters['Cluster'].value_counts())
+print(GMM_clusters_t40['Cluster'].value_counts())
 
 # Print out a contingency table
-contingency_table = pd.crosstab(KM_clusters['Cluster'], GMM_clusters['Cluster'], rownames=['K-means'], colnames=['GMM'])
-print('Contingency table for the two models:')
+contingency_table = pd.crosstab(KM_clusters_t40['Cluster'], GMM_clusters_t40['Cluster'], rownames=['K-means'], colnames=['GMM'])
+print('Contingency table for the two models, for the top 40 features:')
 print(contingency_table)
 
+contingency_table = pd.crosstab(KM_clusters_t40['Cluster'], KM_clusters_total['Cluster'], rownames=['Top 40'], colnames=['Total'])
+print('Contingency table comparing top 40 and total for K-means:')
+print(contingency_table)
+
+contingency_table = pd.crosstab(GMM_clusters_t40['Cluster'], GMM_clusters_total['Cluster'], rownames=['Top 40'], colnames=['Total'])
+print('Contingency table comparing top 40 and total for GMM:')
+print(contingency_table)
 
 # ---------------------------------------------------------------------------------------------
 # (c) Plot the data
@@ -282,8 +291,8 @@ print('----------------- part (c) -------------------')
 print('----------------------------------------------')
 
 # Plot the data wrt cluster membership
-pf.B_Q5c_1(Baseline_no_labels_pca, KM_clustering, GMM_clustering, 'B_Q5c_1')
-
+pf.B_Q5c_1(Baseline_no_labels_pca, KM_clustering_t40, GMM_clustering_t40, 'B_Q5c_top40_clusters')
+pf.B_Q5c_1(Baseline_no_labels_pca, KM_clustering_total, GMM_clustering_total, 'B_Q5c_total_clusters')
 # Get most important feature
 top_fea_KM = KM_feature_importances.nlargest(1).index.tolist()[0]
 Baseline_top_fea_KM = np.array(Baseline_no_labels[top_fea_KM])

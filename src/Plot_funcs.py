@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+import os
 
 def A_Q1a(data):
 
@@ -69,7 +69,11 @@ def A_Q1a(data):
     axes[2,1].legend()
 
     plt.tight_layout()
-    plt.savefig('Plots/A_Q1a.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'A_Q1a.png')
+    plt.savefig(plot_dir)
     plt.close()
 
 
@@ -88,7 +92,11 @@ def A_Q1b(data):
     plt.xlabel('PC1')
     plt.ylabel('PC2')
     plt.tight_layout()
-    plt.savefig('Plots/A_Q1b.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'A_Q1b.png')
+    plt.savefig(plot_dir)
     plt.close()
 
 
@@ -124,7 +132,12 @@ def cluster_plot(data, split1, split2, clustering1, clustering2, k, PATH):
     plt.ylabel(None)
     plt.suptitle('Scatter Plot of the 2 clusterings, for k = '+str(k)+' clusters')
     plt.tight_layout()
-    plt.savefig('Plots/'+PATH+'.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, PATH+'.png')
+    plt.savefig(plot_dir)
+
     plt.close()
 
 
@@ -140,7 +153,11 @@ def A_Q1d_silhouette(silhouette_scores):
     plt.ylabel('Silhouette score')
     plt.title('Silhouette score for different cluster numbers')
     plt.tight_layout()
-    plt.savefig('Plots/A_Q1d_silhouette.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'A_Q1d_silhouette.png')
+    plt.savefig(plot_dir)
     plt.close()
 
 
@@ -149,89 +166,93 @@ def A_Q3c(imputed, original, num):
     fig, axes = plt.subplots(4,3, figsize=(10, 15))
 
 
-    sns.kdeplot(original['Fea58'], ax=axes[0,0], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea58'], ax=axes[0,0], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea58'], ax=axes[0,0], label='Original',warn_singular=False)
+    sns.kdeplot(imputed['Fea58'], ax=axes[0,0], label='Imputed',warn_singular=False )
     axes[0,0].set_title('Density plots of Fea58')
     axes[0,0].set_ylabel('Density')
     axes[0,0].set_xlabel('Feature 58')
     axes[0,0].set_xlim(-2,8)
     axes[0,0].legend()
 
-    sns.kdeplot(original['Fea142'], ax=axes[0,1], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea142'], ax=axes[0,1], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea142'], ax=axes[0,1], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea142'], ax=axes[0,1], label='Imputed', warn_singular=False)
     axes[0,1].set_title('Density plots of Fea58')
     axes[0,1].set_xlabel('Feature 142')
     axes[0,1].set_xlim(-2,8)
     axes[0,1].legend()
 
-    sns.kdeplot(original['Fea150'], ax=axes[0,2], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea150'], ax=axes[0,2], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea150'], ax=axes[0,2], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea150'], ax=axes[0,2], label='Imputed', warn_singular=False)
     axes[0,2].set_title('Density plots of Fea150')
     axes[0,2].set_xlabel('Feature 150')
     axes[0,2].set_xlim(-2,8)
     axes[0,2].legend()
 
-    sns.kdeplot(original['Fea233'], ax=axes[1,0], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea233'], ax=axes[1,0], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea233'], ax=axes[1,0], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea233'], ax=axes[1,0], label='Imputed', warn_singular=False)
     axes[1,0].set_title('Density plots of Fea233')
     axes[1,0].set_ylabel('Density')
     axes[1,0].set_xlabel('Feature 233')
     axes[1,0].set_xlim(-2,8)
     axes[1,0].legend()
 
-    sns.kdeplot(original['Fea269'], ax=axes[1,1], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea269'], ax=axes[1,1], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea269'], ax=axes[1,1], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea269'], ax=axes[1,1], label='Imputed', warn_singular=False)
     axes[1,1].set_title('Density plots of Fea269')
     axes[1,1].set_xlabel('Feature 269')
     axes[1,1].set_xlim(-2,8)
     axes[1,1].legend()
 
-    sns.kdeplot(original['Fea299'], ax=axes[1,2], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea299'], ax=axes[1,2], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea299'], ax=axes[1,2], label='Original',warn_singular=False )
+    sns.kdeplot(imputed['Fea299'], ax=axes[1,2], label='Imputed',warn_singular=False )
     axes[1,2].set_title('Density plots of Fea299')
     axes[1,2].set_xlabel('Feature 299')
     axes[1,2].set_xlim(-2,8)
     axes[1,2].legend()
 
-    sns.kdeplot(original['Fea339'], ax=axes[2,0], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea339'], ax=axes[2,0], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea339'], ax=axes[2,0], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea339'], ax=axes[2,0], label='Imputed', warn_singular=False)
     axes[2,0].set_title('Density plots of Fea339')
     axes[2,0].set_ylabel('Density')
     axes[2,0].set_xlabel('Feature 339')
     axes[2,0].set_xlim(-2,8)
     axes[2,0].legend()
 
-    sns.kdeplot(original['Fea355'], ax=axes[2,1], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea355'], ax=axes[2,1], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea355'], ax=axes[2,1], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea355'], ax=axes[2,1], label='Imputed', warn_singular=False)
     axes[2,1].set_title('Density plots of Fea355')
     axes[2,1].set_xlabel('Feature 355')
     axes[2,1].set_xlim(-2,8)
     axes[2,1].legend()
 
-    sns.kdeplot(original['Fea458'], ax=axes[2,2], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea458'], ax=axes[2,2], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea458'], ax=axes[2,2], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea458'], ax=axes[2,2], label='Imputed', warn_singular=False)
     axes[2,2].set_title('Density plots of Fea458')
     axes[2,2].set_xlabel('Feature 458')
     axes[2,2].set_xlim(-2,8)
     axes[2,2].legend()
 
-    sns.kdeplot(original['Fea466'], ax=axes[3,0], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea466'], ax=axes[3,0], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea466'], ax=axes[3,0], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea466'], ax=axes[3,0], label='Imputed', warn_singular=False)
     axes[3,0].set_title('Density plots of Fea466')
     axes[3,0].set_ylabel('Density')
     axes[3,0].set_xlabel('Feature 466')
     axes[3,0].set_xlim(-2,8)
     axes[3,0].legend()
 
-    sns.kdeplot(original['Fea233'], ax=axes[3,1], label='Original', legend=True)
-    sns.kdeplot(imputed['Fea233'], ax=axes[3,1], label='Imputed', legend=True)
+    sns.kdeplot(original['Fea233'], ax=axes[3,1], label='Original', warn_singular=False)
+    sns.kdeplot(imputed['Fea233'], ax=axes[3,1], label='Imputed', warn_singular=False)
     axes[3,1].set_title('Density plots of Fea233')
     axes[3,1].set_xlabel('Feature 233')
     axes[3,1].set_xlim(-2,8)
     axes[3,1].legend()
 
     plt.tight_layout()
-    plt.savefig('Plots/A_Q3c_'+ str(num) +'.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'A_Q3c_'+ str(num) +'.png')
+    plt.savefig(plot_dir)
     plt.close()
 
 def B_Q4d(n_estimators, error_rate, num):
@@ -243,7 +264,11 @@ def B_Q4d(n_estimators, error_rate, num):
     plt.title('OOB error rate vs number of trees')
     plt.grid()
     plt.tight_layout()
-    plt.savefig('Plots/B_Q4d_' + str(num) + '.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'B_Q4d_' + str(num) + '.png')
+    plt.savefig(plot_dir)
     plt.close()
 
 
@@ -253,7 +278,12 @@ def B_Q4e(feature_importances, num):
     plt.xlabel('Feature Importance')
     plt.ylabel('Feature')
     plt.tight_layout()
-    plt.savefig('Plots/B_Q4e_' + str(num) + '.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'B_Q4e_' + str(num) + '.png')
+    plt.savefig(plot_dir)
+
 
 
 def B_Q5a_silhouette(silhouette_scores):
@@ -264,7 +294,11 @@ def B_Q5a_silhouette(silhouette_scores):
     plt.ylabel('Silhouette score')
     plt.title('Silhouette score for different cluster numbers')
     plt.tight_layout()
-    plt.savefig('Plots/B_Q5a_silhouette.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, 'B_Q5a_silhouette.png')
+    plt.savefig(plot_dir)
 
 
 def B_Q5c_1( data_pca, clustering1, clustering2, PATH):
@@ -301,7 +335,11 @@ def B_Q5c_1( data_pca, clustering1, clustering2, PATH):
     plt.ylabel(None)
     plt.suptitle('Scatter Plot of the 2 clustering techniques,\n K-Means on the left and GMM on the right')
     plt.tight_layout()
-    plt.savefig('Plots/'+PATH+'.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, PATH+'.png')
+    plt.savefig(plot_dir)
     plt.close()
 
 def B_Q5c_2(data, feature1, feature2, PATH):
@@ -338,5 +376,9 @@ def B_Q5c_2(data, feature1, feature2, PATH):
     plt.ylabel(None)
     plt.suptitle('Scatter Plot of the data,\n according to most important feature (Feature)')
     plt.tight_layout()
-    plt.savefig('Plots/'+PATH+'.png')
+    proj_dir = os.getcwd()
+    plots_dir = os.path.join(proj_dir, 'plots')
+    os.makedirs(plots_dir, exist_ok=True)
+    plot_dir = os.path.join(plots_dir, PATH+'.png')
+    plt.savefig(plot_dir)
     plt.close()

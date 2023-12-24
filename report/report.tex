@@ -340,8 +340,8 @@ Here, a k-Nearest Neighbour imputation is used. As said above, this takes into a
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c.png}
-    \caption{\textbf{Density plots of features before and a} Density contours are also shown.}
+    \includegraphics[width=0.85\textwidth]{../Plots/A_Q3c_2.png}
+    \caption{\textbf{Density plots of features before and after the imputation}}
 \end{figure}
 
 \subsection*{(d)}
@@ -421,7 +421,7 @@ We see that feature importance decreases very rapidly before steadily decreasing
 
 \subsection*{(f)}
 
-Here, the previous questions are reproduced using another supervised learning method. The chosen method is Support Vector Machines (SVM), as it is quite good when the data is high dimensional, and even when there are more dimensions than samples \cite{svm_sklearn}. However, in order to get the feature importances back from the SVM model, one needs to use a linear kernel. 
+Here, the previous questions (b, c, e) are reproduced using another supervised learning method. The chosen method is Support Vector Machines (SVM), as it is quite good when the data is high dimensional, and even when there are more dimensions than samples \cite{svm_sklearn}. However, in order to get the feature importances back from the SVM model, one needs to use a linear kernel. 
 
 The data was preprocessed in this same way as for the Random Forest Classifier. Duplicates, low-variance, and higly correlated rows and features are dealt with, and outliers are left alone since the SVM algorithm is robust to them.  
 
@@ -442,12 +442,165 @@ Training the SVM model on just the most important feature, the test set classifi
 
 Two different clustering techniques are explored in this question. One of them will be K-means which has been already discussed partly. It will place a desired number of initial centroids in the feature space and update their position based on cluster members until convergence. The two main outputs are then the cluster centroids' final location and the cluster memberships of all the datasets' points.  
 The second technique will Gaussian Mixture Models. The idea behind this is to assume the entire data is distributed as the sum of multiple multivariate Gaussian distributions with unknown parameters\cite[p. 260]{sklearn_book}. The main outputs for this clustering technique are the parameters of those gaussians (means and covariance matrices), and the weights for each of those Gaussians to be used in the sum.  
+Both of these techniques' output can be used on a dataset to assign cluster memberships to each observation. This is done by assigning each observation to the cluster whose centroid is closest to it for K-means, and by assigning each observation to the Gaussian which has the highest probability of generating that observation for GMM. One property of the GMM is that it can be used to generate new observations, by sampling from the weighted Gaussians. This makes the GMM a generative model.  
 
-Using these methods
+Here, the data was preprocessed in the same way as in Q4 with the addition of dealing with outliers, using the same method as in Q3.
+Using these methods, clusterings are obtained both for the same data which makes comparison easier. The number of clusters is set to 3 for both methods, which is based on the visualisation of the data. The results are shown in
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q5a_silhouette.png}
+    \caption{\textbf{Silhouette scores for the Baseline Dataset}}
+\end{figure}
+
+For each clustering technique, label frequencies were obtained.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c| }
+        \hline
+        \textbf{Label} & \textbf{Frequency} \\
+        \hline
+        \textbf{0} & 103 \\ 
+        \hline
+        \textbf{1} & 173 \\
+        \hline
+        \textbf{3} & 224 \\
+        \hline
+    \end{tabular}
+    \caption{Frequency of the labels for the K-means clustering of \textbf{Baseline} dataset}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c| }
+        \hline
+        \textbf{Label} & \textbf{Frequency} \\
+        \hline
+        \textbf{0} & 169 \\ 
+        \hline
+        \textbf{1} & 176 \\
+        \hline
+        \textbf{3} & 155 \\
+        \hline
+    \end{tabular}
+    \caption{Frequency of the labels for the GMM clustering of \textbf{Baseline} dataset}
+\end{table}
+
+And the following contingency table comparing the 2 clusterings was obtained:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c|c|c| }
+        \hline
+        \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2}\\ 
+        \hline
+        \textbf{0} & 53 & 45 & 5\\
+        \hline
+        \textbf{1} & 4 & 68 & 101\\
+        \hline
+        \textbf{2} & 112 & 63 & 49\\
+        \hline
+    \end{tabular}
+    \caption{Contingency table for the 2 clusterings on the \textbf{Baseline} dataset. Rows are K-means, columns are GMM.}
+\end{table}
+
+Thus, the clusterings are not very stable. There are 2 larger groups (112, 101) which show some agreement for the "cores" of 2 clusters though 5 groups of consequent size (53, 45, 68, 63, 49) which clearly show some ambiguity as to what cluster some points should belong to. 
+
+\subsection*{(b)}
+
+Similar to Q4, a random forest classifier is trained to determine feature importances. However, where the problem was supervised and the true labels were known, here the labels obtained from the clusterings are used. Thus, 2 models are trained and the following feature importances were derived.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{../Plots/B_Q4e_3.png}
+    \includegraphics[width=0.4\textwidth]{../Plots/B_Q4e_4.png}
+    \caption{\textbf{Random Forest Feature Importance}, for the 50 most important features, from K-means clustering (left) and GMM clustering (right)}
+\end{figure}
+
+As one can see, there is some agreement between the 2 on what features are most important. With each set of most important features, the clustering is re-run for each technique based on each top 40 features only. The following contingency tables compare the 2 top 40 features models together and for each technique, the top 40 and the total features clustering.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c|c|c| }
+        \hline
+        \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2}\\ 
+        \hline
+        \textbf{0} & 6 & 103 & 5\\
+        \hline
+        \textbf{1} & 17 & 53 & 79\\
+        \hline
+        \textbf{2} & 175 & 0 & 62\\
+        \hline
+    \end{tabular}
+    \caption{\textbf{Contingency table for the 2 clusterings on the Baseline dataset.} For the top 40 most important features. Rows are K-means and columns are GMM.}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c|c|c| }
+        \hline
+        \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2}\\ 
+        \hline
+        \textbf{0} & 91 & 20 & 3\\
+        \hline
+        \textbf{1} & 11 & 130 & 8\\
+        \hline
+        \textbf{2} & 1 & 23 & 213\\
+        \hline
+    \end{tabular}
+    \caption{\textbf{Contingency table for the top 40 and total features clustering on the Baseline dataset.} For K-means. The rows are the top 40 features clustering and the columns are the total features clustering.}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ |c|c|c|c| }
+        \hline
+        \textbf{Clusters} & \textbf{0} & \textbf{1} & \textbf{2}\\ 
+        \hline
+        \textbf{0} & 168 & 9 & 21\\
+        \hline
+        \textbf{1} & 3 & 134 & 19\\
+        \hline
+        \textbf{2} & 43 & 10 & 93\\
+        \hline
+    \end{tabular}
+    \caption{\textbf{Contingency table for the top 40 and total features clustering on the Baseline dataset.} For GMM. The rows are the top 40 features clustering and the columns are the total features clustering.}
+\end{table}
 
 
+\subsection*{(c)}
+
+Having applied PCA to run the GMM clustering, the data can be visualised on the first 2 PCs. The following plots show the data colour coded according to cluster memberships for the total features clustering and the top 40 features clustering, each for the 2 clustering techniques.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q5c_total_clusters.png}
+    \caption{\textbf{Scatter plot of cluster memberships.}For the total features clustering. K-means (left) and GMM (right).}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q5c_top40_clusters.png}
+    \caption{\textbf{Scatter plot of cluster memberships.}For the top 40 features clustering. K-means (left) and GMM (right).}
+\end{figure}
+
+Here, the agreement can be seen between the 2 techniques. The top 40 features clustering is more ambiguous, with the clusters overlapping more, especially for K-means. The main issue with the 2 clustering techniques used is that they are both at risk of falling into local minima. This is especially true for K-means, which is very sensitive to the initialisation of the centroids\cite[p. 263]{sklearn_book}. This could be the reason for some of the disagreements. Futhermore, the Baseline dataset is quite high dimensional, with 1000 features. This leads to something called the Curse of Dimensionality which is that data becomes very sparse as the number of dimensions increases\cite[p. 217]{sklearn_book}. This means distance measurements like the ones in K-means can run into some difficulty.  
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q5c_2.png}
+    \caption{\textbf{Scatter plot of the data color coded according to the most important feature.} K-means (left) and GMM (right).}
+\end{figure}
 
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Plots/B_Q5c_3.png}
+    \caption{\textbf{Scatter plot of the data color coded according to the 2nd most important feature.} K-means (left) and GMM (right).}
+\end{figure}
+
+Figure 12 and 13 show the data colour coded according to the first and second most important features for both clustering techniques. The first most important feature seems to help in differentiating between the 2 right and left clusters, and the bottom cluster, comparing with figure 10 and 11. The second most important feature seems to help in differentiating between the right and left clusters, again looking at Figure 10 and 11.
 \bibliographystyle{plain}
 \bibliography{refs.bib}
 

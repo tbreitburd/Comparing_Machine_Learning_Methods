@@ -119,5 +119,4 @@ C_imputed.columns = C_e_nan.columns
 
 C_new_e = C_e_nan.fillna(C_imputed)
 
-
 pf.A_Q3c(C_new_e, C_d, 2)
