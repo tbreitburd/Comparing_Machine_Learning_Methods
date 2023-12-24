@@ -49,5 +49,5 @@ The codes for all questions should take less than a minute to run. With the exce
 
 ## Use of generative AI
 
-Copilot's autocompletion feature was used in coding the project, when writing docstrings for the functions, and when covering repetitive parts of the code, like part (f) and (g)'s hypothesis testing.
+Copilot's autocompletion feature was used in coding the project, when writing docstrings for the functions, and when covering repetitive parts of the code, such as the density plots in Plot_funcs.
 ChatGPT was used to help in debugging the code, by providing the tracebacks when an error was difficult to understand.

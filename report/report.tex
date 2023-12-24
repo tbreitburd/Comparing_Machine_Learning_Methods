@@ -271,7 +271,7 @@ The same dataset as in A is given, but with duplicated observations and missing 
 
 \subsection*{(a)}
 
-First, the frequency of the labels is summarised in the table below (Table 2):
+First, the frequency of the labels is summarised in the table below (Table 4):
 
 \begin{table}[h]
 \centering
@@ -384,6 +384,7 @@ Here, a KNN-imputer was used. By training the model on the data with the outlier
 
 Some of those distributions are not plotted as the variance of those features is now 0, after the imputation. Figure 6 shows that some distributions have been narrowed, which is what is expected from correcting outliers.
 
+\newpage
 \section*{Question 4}
 
 \subsection*{(a)}
@@ -419,7 +420,7 @@ Training this model, a test set classification error of 0.04 is found.
 
 \subsection*{(d)}
 
-This number of trees in the random forest can be optimised using an Out-Of-Bag (OOB) score. This works from the fact each tree is built for a bootstrapped sub-sample of the dataset. Leaving an "Out-Of-Bag" sample the trees for which that sample was OOB can be tested upon. An OOB classification error can thus be obtained, for each number of trees\cite[p. 345]{james2013introduction}.  
+This number of trees in the random forest can be optimised using an Out-Of-Bag (OOB) score. This works from the fact each tree is built for a bootstrapped sub-sample of the dataset. Leaving an "Out-Of-Bag" sample the trees for which that sample was OOB can be tested upon. An OOB classification error can thus be obtained in Figure 7, for each number of trees\cite[p. 345]{james2013introduction}.  
 
 
 \begin{figure}[htbp]
@@ -430,12 +431,12 @@ This number of trees in the random forest can be optimised using an Out-Of-Bag (
 
 Thus, the optimal number of trees is around 150, where the OOB error stabilizes, and going further only makes the model more computationally expensive.
 
-Re-running the model for the optimal tree number, the test-classification error now is 0.04.
+Re-running the model for the optimal tree number, the test-classification error now is 0.04. Thus the improvement is minimal in this case.
 
 
 \subsection*{(e)}
 
-One characteristic of the random forest classifier is it can give us the relative importance of features. It is computed as how much of a reduction in the Gini index (or other used criterion) is brought by that feature. Were it not for the bootstrapping and subset of features to split from, there would not be enough information for that measure to be computed accurately\cite[pp. 345-346]{james2013introduction}. In this case, we obtained the following plot, with the 50 most important features:
+One characteristic of the random forest classifier is it can give us the relative importance of features. It is computed as how much of a reduction in the Gini index (or other used criterion) is brought by that feature. Were it not for the bootstrapping and subset of features to split from, there would not be enough information for that measure to be computed accurately\cite[pp. 345-346]{james2013introduction}. In this case, we obtained the plot in Figure 8, with the 50 most important features:
 
 \begin{figure}[htbp]
     \centering
@@ -452,10 +453,10 @@ Here, the previous questions (b, c, e) are reproduced using another supervised l
 
 The data was preprocessed in this same way as for the Random Forest Classifier. Duplicates, low-variance, and highly correlated rows and features are dealt with, and outliers are left alone since the SVM algorithm is robust to them.  
 
-Running this, a test set classification error of 0.0799 was obtained. And using the \texttt{coeff\_} output of the model, the feature importances were obtained and plotted in figure 7. As one cans see there is some agreement between the 2 models, with the most important feature being the same and a few features with relatively similar importance (Fea36, Fea354,\ldots)  
+Running this, a test set classification error of 0.0799 was obtained. And using the \texttt{coeff\_} output of the model, the feature importances were obtained and plotted in figure 9. As one cans see there is some agreement between the 2 models, with the most important feature being the same and a few features with relatively similar importance (Fea36, Fea354,\ldots)  
 Training the SVM model on just the most important feature, the test set classification error roughly doubles but stays indicative of good performance.
 
-\begin{figure}{h}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.5\textwidth]{../Plots/B_Q4e_2.png}
     \caption{\textbf{SVM Feature Importance}, for the 50 most important features}
@@ -472,7 +473,7 @@ The second technique will Gaussian Mixture Models. The idea behind this is to as
 Both of these techniques' output can be used on a dataset to assign cluster memberships to each observation. This is done by assigning each observation to the cluster whose centroid is closest to it for K-means, and by assigning each observation to the Gaussian which has the highest probability of generating that observation for GMM. One property of the GMM is that it can be used to generate new observations, by sampling from the weighted Gaussians. This makes the GMM a generative model.  
 
 Here, the data was preprocessed in the same way as in Q4 with the addition of dealing with outliers, using the same method as in Q3.
-Using these methods, clusterings are obtained both for the same data which makes comparison easier. The number of clusters is set to 3 for both methods, which is based on the visualisation of the data. The results are shown in
+Using these methods, clusterings are obtained both for the same data which makes comparison easier. The number of clusters is set to 3 for both methods, which is based on the visualisation of the data, see Figures 12 and 13. The results are shown in Tables 8 and 9.
 
 \begin{figure}[htbp]
     \centering
@@ -629,6 +630,10 @@ Here, the agreement can be seen between the 2 techniques. The top 40 features cl
 
 Figure 12 and 13 show the data colour coded according to the first and second most important features for both clustering techniques. The first most important feature seems to help in differentiating between the 2 right and left clusters, and the bottom cluster, comparing with figure 10 and 11. The second most important feature seems to help in differentiating between the right and left clusters, again looking at Figure 10 and 11.
 
+\chapter*{Appendix}
+
+Copilot's autocompletion feature was used in coding the project, when writing docstrings for the functions, and when covering repetitive parts of the code, such as the density plots in Plot\_funcs.
+ChatGPT was used to help in debugging the code, by providing the tracebacks when an error was difficult to understand.
 
 \bibliographystyle{plain}
 \bibliography{refs.bib}
